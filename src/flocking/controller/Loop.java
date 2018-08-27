@@ -2,6 +2,7 @@ package flocking.controller;
 
 import flocking.controller.input.Command;
 import flocking.model.Model;
+import flocking.view.View;
 
 /**
  * An interface for a generic loop.
@@ -9,9 +10,11 @@ import flocking.model.Model;
 public interface Loop {
 
     /**
-     * @param model the logic behind
+     * @param model the {@link Model} to update
+     * @param scene the {@link View} to render
+     * The method used to initialize the game loop. 
      */
-    void setup(Model model);
+    void setup(Model model, View scene);
 
     /**
      * The game loop based on cycles elapsed time that manage game and graphic updates.

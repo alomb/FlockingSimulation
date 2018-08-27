@@ -9,7 +9,7 @@ import java.awt.event.WindowEvent;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
-import flocking.model.Model;
+import flocking.controller.Controller;
 
 /**
  * The implementation of {@link View}.
@@ -17,28 +17,26 @@ import flocking.model.Model;
 public class ViewImpl implements View {
 
     private final JFrame frame;
-    private final Scene scene;
+    private Scene scene;
+
+    private final int width;
+    private final int height;
 
     /**
      * Initialize the frame and the window.
-     * @param model the application {@link Model}
      */
-    public ViewImpl(final Model model) {
+    public ViewImpl() {
 
-        final int h = (int) Toolkit.getDefaultToolkit().getScreenSize().getHeight();
-        final int w = (int) Toolkit.getDefaultToolkit().getScreenSize().getWidth();
-
+        this.height = (int) Toolkit.getDefaultToolkit().getScreenSize().getHeight();
+        this.width = (int) Toolkit.getDefaultToolkit().getScreenSize().getWidth();
         this.frame = new JFrame("FlockMovement");
-        this.scene = new SceneImpl(w, h, model);
-        this.scene.focus();
-        frame.getContentPane().add((Component) this.scene);
-        frame.setSize(w, h);
-        frame.setMinimumSize(new Dimension(w, h));
+        frame.setSize(this.width, this.height);
+        frame.setMinimumSize(new Dimension(this.width, this.height));
         frame.setResizable(false);
     }
 
     @Override
-    public final void initialize() {
+    public final void initialize(final Controller controller) {
         frame.addWindowListener(new WindowAdapter() {
             public void windowClosing(final WindowEvent ev) {
                 System.exit(0);
@@ -47,6 +45,10 @@ public class ViewImpl implements View {
                 System.exit(0);
             }
         });
+
+        this.scene = new SceneImpl(this.width, this.height, controller);
+        frame.getContentPane().add((Component) this.scene);
+        this.scene.focus();
 
         frame.pack();
         frame.setVisible(true);

@@ -1,10 +1,8 @@
 package flocking.model;
 
-import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.stream.IntStream;
 
 /**
  * The simulation environment.
@@ -12,7 +10,6 @@ import java.util.stream.IntStream;
 public class Simulation implements Model {
 
     private final List<Entity> entities;
-    private static final int ENTITIES = 500;
 
     /**
      * Initialize variables.
@@ -24,7 +21,7 @@ public class Simulation implements Model {
 
     @Override
     public final void update(final float elapsed) {
-
+        this.entities.forEach(e -> e.update(elapsed));
     }
 
     @Override
@@ -34,12 +31,19 @@ public class Simulation implements Model {
 
     @Override
     public final void recalculate() {
+        entities.clear();
+    }
+
+    @Override
+    public final void createEntity() {
         final int sideLength = 10;
         final int maxSize = 700;
-        entities.clear();
-        IntStream.range(0, Simulation.ENTITIES).forEach(i -> {
-            entities.add(new EntityImpl(new Point(new Random().nextInt(maxSize), new Random().nextInt(maxSize)), sideLength));
-        });
+        final int speed = 50;
+
+        this.entities.add(new EntityImpl(new Vector2DImpl(new Random().nextInt(maxSize),
+                new Random().nextInt(maxSize)),
+                sideLength,
+                speed));
     }
 
 }

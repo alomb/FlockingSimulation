@@ -22,4 +22,9 @@ public interface Model {
      */
     void recalculate();
 
+    /**
+     * Creates a new {@link Entity}.
+     */
+    void createEntity();
+
 }

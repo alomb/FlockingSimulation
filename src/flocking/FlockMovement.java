@@ -1,9 +1,7 @@
 package flocking;
 
-import flocking.controller.Engine;
-import flocking.controller.Loop;
-import flocking.model.Model;
-import flocking.model.Simulation;
+import flocking.controller.Controller;
+import flocking.controller.ControllerImpl;
 import flocking.view.View;
 import flocking.view.ViewImpl;
 
@@ -20,10 +18,8 @@ public final class FlockMovement {
      * @param args the parameters passed via command line
      */
     public static void main(final String[] args) {
-        final Model model = new Simulation();
-        final View scene = new ViewImpl(model);
-        final Loop engine = new Engine(scene);
-        engine.setup(model);
-        engine.mainLoop();
+        final View view = new ViewImpl();
+        final Controller controller = new ControllerImpl(view);
+        controller.setup();
     }
 }

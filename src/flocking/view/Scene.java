@@ -1,6 +1,6 @@
 package flocking.view;
 
-import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.event.KeyListener;
 
 /**
@@ -19,8 +19,8 @@ public interface Scene extends KeyListener {
     void render();
 
     /**
-     * @param g the {@link Graphics} for the scene
+     * @param g the {@link Graphics2D} for the scene
      */
-    void draw(Graphics g);
+    void draw(Graphics2D g);
 
 }

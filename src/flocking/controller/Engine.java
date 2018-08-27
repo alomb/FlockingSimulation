@@ -19,25 +19,21 @@ public class Engine implements Loop {
     private boolean running;
     private boolean stopped;
 
-    private final View scene;
+    private View scene;
     private Model model;
     private Optional<Command> currentCommand;
 
     /**
-     * @param scene the {@link ViewImpl} to render
+     * Initialize some variables.
      */
-    public Engine(final View scene) {
+    public Engine() {
         this.currentCommand = Optional.empty();
-        this.scene = scene;
     }
 
-    /**
-     * The method used to initialize the game loop. 
-     */
     @Override
-    public final void setup(final Model game) {
+    public final void setup(final Model game, final View scene) {
         this.model = game;
-        this.scene.initialize();
+        this.scene = scene;
 
         this.running = true;
         this.stopped = false;

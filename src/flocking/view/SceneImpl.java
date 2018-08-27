@@ -6,19 +6,23 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JPanel;
 
-import flocking.model.Model;
+import flocking.controller.Controller;
+import flocking.controller.input.CreateEntityCommand;
+import flocking.model.Entity;
 
 /**
  * A generic implementation of {@link Scene}.
  */
 public class SceneImpl extends JPanel implements Scene {
 
-    private final Model model;
+    private final Controller controller;
 
     /**
      * 
@@ -28,11 +32,11 @@ public class SceneImpl extends JPanel implements Scene {
     /**
      * @param w the panel width
      * @param h the panel height
-     * @param model the application {@link Model}
+     * @param controller the application {@link Controller}
      */
-    public SceneImpl(final int w, final int h, final Model model) {
+    public SceneImpl(final int w, final int h, final Controller controller) {
         super();
-        this.model = model;
+        this.controller = controller;
         this.setSize(w, h);
         this.setBackground(Color.WHITE);
     }
@@ -55,14 +59,16 @@ public class SceneImpl extends JPanel implements Scene {
     @Override
     protected final void paintComponent(final Graphics g) {
         super.paintComponent(g);
-        this.draw(g);
+        this.draw((Graphics2D) g);
     }
 
     @Override
-    public final void draw(final Graphics g) {
-        this.model.getFigures().forEach(f -> {
-            this.drawFigure(g, f.getFigure());
-        });
+    public final void draw(final Graphics2D g) {
+        for (final Entity e : this.controller.getFigures()) {
+            final List<Point> vertices = new ArrayList<>();
+            e.getFigure().forEach(f -> vertices.add(new Point((int) Math.round(f.getX()), (int) Math.round(f.getY()))));
+            this.drawFigure(g, vertices, e.getAngle());
+        }
     }
 
     @Override
@@ -73,8 +79,7 @@ public class SceneImpl extends JPanel implements Scene {
     @Override
     public final void keyPressed(final KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-            this.model.recalculate();
-            System.out.println("sds");
+            this.controller.notifyCommand(new CreateEntityCommand());
         }
     }
 
@@ -83,7 +88,7 @@ public class SceneImpl extends JPanel implements Scene {
 
     }
 
-    private void drawFigure(final Graphics g, final List<Point> points) {
+    private void drawFigure(final Graphics2D g, final List<Point> points, final double angle) {
         final GeneralPath polygon = new GeneralPath(GeneralPath.WIND_EVEN_ODD,
                 points.size());
 
@@ -94,6 +99,14 @@ public class SceneImpl extends JPanel implements Scene {
         }
 
         polygon.closePath();
-        ((Graphics2D) g).draw(polygon);
+
+        final AffineTransform at = AffineTransform.getRotateInstance(Math.toRadians(angle), getCentroid(points).x, getCentroid(points).y);
+        polygon.transform(at);
+        g.draw(polygon);
+    }
+
+    private Point getCentroid(final List<Point> points) {
+        return new Point(points.stream().mapToInt(p -> p.x).sum() / points.size(), 
+                points.stream().mapToInt(p -> p.y).sum() / points.size());
     }
 }
