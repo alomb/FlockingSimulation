@@ -3,14 +3,29 @@ package flocking.model;
 import java.awt.Point;
 import java.util.List;
 
+/**
+ * A simulation entity.
+ */
 public interface Entity {
 
-	List<Point> getFigure();
+    /**
+     * @return the figure {@link Point}s
+     */
+    List<Point> getFigure();
 
-	void setFigure(List<Point> figure);
+    /**
+     * @param figure the new figure's {@link Point}s
+     */
+    void setFigure(List<Point> figure);
 
-	Point getPosition();
+    /**
+     * @return the central {@link Point} of the entity
+     */
+    Point getPosition();
 
-	void setPosition(Point position);
+    /**
+     * @param position the new {@link Entity}'s central {@link Point}
+     */
+    void setPosition(Point position);
 
 }

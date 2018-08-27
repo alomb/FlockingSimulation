@@ -21,6 +21,7 @@ public class ViewImpl implements View {
 
     /**
      * Initialize the frame and the window.
+     * @param model the application {@link Model}
      */
     public ViewImpl(final Model model) {
 
@@ -35,7 +36,7 @@ public class ViewImpl implements View {
         frame.setMinimumSize(new Dimension(w, h));
         frame.setResizable(false);
     }
-    
+
     @Override
     public final void initialize() {
         frame.addWindowListener(new WindowAdapter() {
@@ -43,7 +44,7 @@ public class ViewImpl implements View {
                 System.exit(0);
             }
             public void windowClosed(final WindowEvent ev) {
-            	System.exit(0);
+                System.exit(0);
             }
         });
 

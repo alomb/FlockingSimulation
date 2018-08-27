@@ -2,12 +2,24 @@ package flocking.model;
 
 import java.util.List;
 
+/**
+ * The generic model used to manage the environment.
+ */
 public interface Model {
 
-	void update(float elapsed);
+    /**
+     * @param elapsed the time elapsed in the loop cycle
+     */
+    void update(float elapsed);
 
-	List<Entity> getFigures();
+    /**
+     * @return the {@link Entity}'s figures
+     */
+    List<Entity> getFigures();
 
-	void recalculate();
+    /**
+     * 
+     */
+    void recalculate();
 
 }

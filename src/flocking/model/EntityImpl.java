@@ -4,40 +4,47 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * An implementation of {@link Entity}.
+ */
 public class EntityImpl implements Entity {
 
-	private Point position;
+    private Point position;
 
-	//private final int sideLength;
-	private List<Point> figure;
+    //private final int sideLength;
+    private List<Point> figure;
 
-	public EntityImpl(final Point startPos, final int sideLength) {
-		//this.sideLength = sideLength;
-		this.position = startPos;
+    /**
+     * @param startPos the first {@link Entity}'s {@link Point}
+     * @param sideLength the {@link Entity} length
+     */
+    public EntityImpl(final Point startPos, final int sideLength) {
+        //this.sideLength = sideLength;
+        this.position = startPos;
 
-		this.figure = new ArrayList<>();
-		this.figure.add(new Point(startPos.x - sideLength / 2, startPos.y - sideLength / 2));
-		this.figure.add(new Point(startPos.x + sideLength / 2, startPos.y - sideLength / 2));
-		this.figure.add(new Point(startPos.x, startPos.y + sideLength / 2));
-	}
+        this.figure = new ArrayList<>();
+        this.figure.add(new Point(startPos.x - sideLength / 2, startPos.y - sideLength / 2));
+        this.figure.add(new Point(startPos.x + sideLength / 2, startPos.y - sideLength / 2));
+        this.figure.add(new Point(startPos.x, startPos.y + sideLength / 2));
+    }
 
-	@Override
-	public final List<Point> getFigure() {
-		return this.figure;
-	}
+    @Override
+    public final List<Point> getFigure() {
+        return this.figure;
+    }
 
-	@Override
-	public final void setFigure(final List<Point> figure) {
-		this.figure = figure;
-	}
+    @Override
+    public final void setFigure(final List<Point> figure) {
+        this.figure = figure;
+    }
 
-	@Override
-	public final Point getPosition() {
-		return this.position;
-	}
+    @Override
+    public final Point getPosition() {
+        return this.position;
+    }
 
-	@Override
-	public final void setPosition(final Point position) {
-		this.position = position;
-	}
+    @Override
+    public final void setPosition(final Point position) {
+        this.position = position;
+    }
 }

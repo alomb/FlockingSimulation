@@ -7,17 +7,23 @@ import flocking.model.Simulation;
 import flocking.view.View;
 import flocking.view.ViewImpl;
 
+/**
+ * The application main class.
+ */
 public final class FlockMovement {
 
-	private FlockMovement() {
-		
-	}
+    private FlockMovement() {
 
-	public static void main(final String[] args) {
-		final Model model = new Simulation();
-		final View scene = new ViewImpl(model);
-		final Loop engine = new Engine(scene);
-		engine.setup(model);
-		engine.mainLoop();
-	}
+    }
+
+    /**
+     * @param args the parameters passed via command line
+     */
+    public static void main(final String[] args) {
+        final Model model = new Simulation();
+        final View scene = new ViewImpl(model);
+        final Loop engine = new Engine(scene);
+        engine.setup(model);
+        engine.mainLoop();
+    }
 }

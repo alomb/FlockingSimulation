@@ -5,12 +5,12 @@ package flocking.view;
  */
 public interface View {
 
-	/**
-	 * Initialize the view.
-	 */
-	void initialize();
-	
-	/**
+    /**
+     * Initialize the view.
+     */
+    void initialize();
+
+    /**
      * Render the current {@link Scene}.
      */
     void render();

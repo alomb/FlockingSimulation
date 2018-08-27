@@ -18,7 +18,7 @@ import flocking.model.Model;
  */
 public class SceneImpl extends JPanel implements Scene {
 
-	private final Model model;
+    private final Model model;
 
     /**
      * 
@@ -28,7 +28,7 @@ public class SceneImpl extends JPanel implements Scene {
     /**
      * @param w the panel width
      * @param h the panel height
-     * @param controller the application {@link Controller}
+     * @param model the application {@link Model}
      */
     public SceneImpl(final int w, final int h, final Model model) {
         super();
@@ -61,7 +61,7 @@ public class SceneImpl extends JPanel implements Scene {
     @Override
     public final void draw(final Graphics g) {
         this.model.getFigures().forEach(f -> {
-        	this.drawFigure(g, f.getFigure());
+            this.drawFigure(g, f.getFigure());
         });
     }
 
@@ -73,8 +73,8 @@ public class SceneImpl extends JPanel implements Scene {
     @Override
     public final void keyPressed(final KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-        	this.model.recalculate();
-        	System.out.println("sds");
+            this.model.recalculate();
+            System.out.println("sds");
         }
     }
 
@@ -84,16 +84,16 @@ public class SceneImpl extends JPanel implements Scene {
     }
 
     private void drawFigure(final Graphics g, final List<Point> points) {
-    	final GeneralPath polygon = new GeneralPath(GeneralPath.WIND_EVEN_ODD,
-    	                        points.size());
+        final GeneralPath polygon = new GeneralPath(GeneralPath.WIND_EVEN_ODD,
+                points.size());
 
-    	polygon.moveTo(points.get(0).x, points.get(0).y);
+        polygon.moveTo(points.get(0).x, points.get(0).y);
 
-    	for (int index = 1; index < points.size(); index++) {
-    	        polygon.lineTo(points.get(index).x, points.get(index).y);
-    	}
+        for (int index = 1; index < points.size(); index++) {
+                polygon.lineTo(points.get(index).x, points.get(index).y);
+        }
 
-    	polygon.closePath();
-    	((Graphics2D) g).draw(polygon);
+        polygon.closePath();
+        ((Graphics2D) g).draw(polygon);
     }
 }
