@@ -1,5 +1,6 @@
 package flocking.model;
 
+import java.awt.Shape;
 import java.util.List;
 
 /**
@@ -36,5 +37,10 @@ public interface Entity {
      * @param elapsed the time elapsed in the loop cycle
      */
     void update(float elapsed);
+
+    /**
+     * @return a {@link Shape} of the cohesion influence area
+     */
+    Shape getCohesionArea();
 
 }

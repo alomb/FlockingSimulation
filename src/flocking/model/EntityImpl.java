@@ -1,6 +1,10 @@
 package flocking.model;
 
-
+import java.awt.Rectangle;
+import java.awt.Shape;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Arc2D;
+import java.awt.geom.Path2D;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -16,7 +20,9 @@ public class EntityImpl implements Entity {
 
     private int timer;
     private static final int MAX_TIMER = 500;
-    private static final int MAX_ANGLE = 45;
+
+    private static final double MIN_ANGLE = 135;
+    private static final double MAX_ANGLE = -270;
 
     private final int sideLength;
     private List<Vector2D> figure;
@@ -70,9 +76,9 @@ public class EntityImpl implements Entity {
         if (this.timer <= 0) {
             final Random rnd = new Random();
             if (rnd.nextBoolean()) {
-                angle += rnd.nextInt(EntityImpl.MAX_ANGLE);
+                angle += rnd.nextInt(45);
             } else {
-                angle -= rnd.nextInt(EntityImpl.MAX_ANGLE);
+                angle -= rnd.nextInt(45);
             }
 
             if (angle < 0) {
@@ -83,13 +89,37 @@ public class EntityImpl implements Entity {
             this.timer = EntityImpl.MAX_TIMER;
 
             final double angleRad = Math.toRadians(this.angle);
-
             final Vector2D targetPos = new Vector2DImpl(this.position.normalize().getX() * Math.cos(angleRad) * this.speed,
                     this.position.normalize().getY() * Math.sin(angleRad) * this.speed);
             this.position = this.position.sumVector(targetPos);
 
+            this.cohesion();
+
         } else {
             this.timer -= elapsed;
         }
+    }
+
+    private void cohesion() {
+        final List<Entity> neighbors = Simulation.getNeighbors(this.getCohesionArea(), this);
+        System.out.println(neighbors + " of " + this + " " + this.getPosition());
+    }
+
+    @Override
+    public final Shape getCohesionArea() {
+        final Rectangle rectangle = new Rectangle((int) this.position.getX() - sideLength * 5,
+                (int) this.position.getY() - sideLength * 5,
+                sideLength * 10,
+                sideLength * 10);
+
+        final Shape arc = new Arc2D.Double(rectangle.x, rectangle.y, rectangle.width, rectangle.height, MIN_ANGLE, MAX_ANGLE, Arc2D.OPEN);
+
+        final Path2D.Double path = new Path2D.Double();
+        path.append(arc, false);
+
+        final AffineTransform at = AffineTransform.getRotateInstance(Math.toRadians(angle), this.position.getX(), this.position.getY());
+        path.transform(at);
+
+        return path;
     }
 }
