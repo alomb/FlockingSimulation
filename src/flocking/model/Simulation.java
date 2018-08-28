@@ -2,7 +2,7 @@ package flocking.model;
 
 import java.awt.Point;
 import java.awt.Shape;
-
+import java.awt.Toolkit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -39,14 +39,15 @@ public class Simulation implements Model {
 
     @Override
     public final void createEntity() {
-        final int sideLength = 10;
-        final int maxSize = 700;
+        final int sideLength = 8;
+        final int speed = 12;
+        final Random rnd = new Random();
 
-        Simulation.ENTITIES.add(new EntityImpl(new Vector2DImpl(new Random().nextInt(maxSize),
-                new Random().nextInt(maxSize)),
+        Simulation.ENTITIES.add(new EntityImpl(new Vector2DImpl(rnd.nextInt((int) Toolkit.getDefaultToolkit().getScreenSize().getWidth()),
+                rnd.nextInt((int) Toolkit.getDefaultToolkit().getScreenSize().getHeight())),
                 sideLength,
-                new Vector2DImpl(new Random().nextInt(20) - 10, 
-                        new Random().nextInt(20) - 10)));
+                new Vector2DImpl(rnd.nextBoolean() ? speed : -speed,
+                        rnd.nextBoolean() ? speed : -speed)));
     }
 
     /**

@@ -25,8 +25,13 @@ public class EntityImpl implements Entity {
     private static final double MAX_ANGLE = -270;
     private static final int DELTA_ANGLE = 45;
 
+    private static final int AREA = 20;
+    private static final double MAX_FORCE = 25;
+    private static final double MAX_SPEED = 20;
+
     private final int sideLength;
     private List<Vector2D> figure;
+    private final double mass;
 
     /**
      * @param startPos the first {@link Entity}'s {@link Point}
@@ -37,6 +42,7 @@ public class EntityImpl implements Entity {
         this.position = new Vector2DImpl(startPos);
         this.speed = new Vector2DImpl(speed);
         this.angle = Math.toDegrees(Math.atan2(speed.getY(), speed.getX()));
+        this.mass = 10;
 
         this.timer = EntityImpl.MAX_TIMER;
 
@@ -76,7 +82,16 @@ public class EntityImpl implements Entity {
     @Override
     public final void update(final float elapsed) {
         if (this.timer <= 0) {
-            this.position = this.position.sumVector(this.wander());
+            Vector2D result = new Vector2DImpl(0, 0);
+            result = result.sumVector(this.wander());
+            result = result.clampMagnitude(EntityImpl.MAX_FORCE);
+            result = result.mulScalar(1 / this.mass);
+
+            System.out.println(this.speed.sumVector(result).lenght());
+            final Vector2D finalSpeed = this.speed.sumVector(result).clampMagnitude(EntityImpl.MAX_SPEED);
+            this.position = this.position.sumVector(finalSpeed);
+
+            this.speed = this.speed.setAngle(angle);
 
             this.timer = EntityImpl.MAX_TIMER;
         } else {
@@ -91,8 +106,6 @@ public class EntityImpl implements Entity {
             deltaAngle = -rnd.nextInt(EntityImpl.DELTA_ANGLE);
         }
 
-        //Begin previous wander operation code
-        //this.speed = this.speed.rotate(deltaAngle);
         Vector2D center = new Vector2DImpl(this.speed);
         center = center.normalize().mulScalar(this.sideLength * 2);
 
@@ -100,7 +113,6 @@ public class EntityImpl implements Entity {
         displacement = displacement.mulScalar(this.sideLength);
 
         displacement = displacement.rotate(deltaAngle);
-        this.speed = this.speed.rotate(deltaAngle);
 
         angle += deltaAngle;
         if (angle < 0) {
@@ -109,17 +121,15 @@ public class EntityImpl implements Entity {
             angle -= 360;
         }
 
-        //End previous wander operation code
-        //return this.speed;
         return displacement.sumVector(center);
     }
 
     @Override
     public final Shape getCohesionArea() {
-        final Rectangle rectangle = new Rectangle((int) this.position.getX() - sideLength * 5,
-                (int) this.position.getY() - sideLength * 5,
-                sideLength * 10,
-                sideLength * 10);
+        final Rectangle rectangle = new Rectangle((int) this.position.getX() - sideLength * AREA / 2,
+                (int) this.position.getY() - sideLength * AREA / 2,
+                sideLength * AREA,
+                sideLength * AREA);
 
         final Shape arc = new Arc2D.Double(rectangle.x,
                 rectangle.y, 

@@ -71,11 +71,6 @@ public class Vector2DImpl implements Vector2D {
     }
 
     @Override
-    public final String toString() {
-        return new String("(" + this.x + ", " + this.y + ")");
-    }
-
-    @Override
     public final Vector2D rotate(final double deltaAngle) {
         final Vector2D result = new Vector2DImpl(this.x, this.y);
         final double deltaAngleRad = Math.toRadians(deltaAngle);
@@ -83,5 +78,28 @@ public class Vector2DImpl implements Vector2D {
         result.setX(this.x * Math.cos(deltaAngleRad) - this.y * Math.sin(deltaAngleRad));
         result.setY(this.x * Math.sin(deltaAngleRad) + this.y * Math.cos(deltaAngleRad));
         return result;
+    }
+
+    @Override
+    public final Vector2D setAngle(final double angle) {
+        final double length = this.lenght();
+
+        return new Vector2DImpl(Math.cos(Math.toRadians(angle)) * length, 
+                Math.sin(Math.toRadians(angle)) * length);
+    }
+
+    @Override
+    public final Vector2D clampMagnitude(final double maxLength) {
+        if (this.lenght() > maxLength) {
+            return new Vector2DImpl(this.x * maxLength / this.lenght(),
+                    this.y * maxLength / this.lenght());
+        }
+
+        return this;
+    }
+
+    @Override
+    public final String toString() {
+        return new String("(" + this.x + ", " + this.y + ")");
     }
 }

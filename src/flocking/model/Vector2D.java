@@ -60,4 +60,15 @@ public interface Vector2D {
      */
     Vector2D rotate(double deltaAngle);
 
+    /**
+     * @param angle the angle the vector has with its origin 
+     * @return the vector rotated
+     */
+    Vector2D setAngle(double angle);
+
+    /**
+     * @param maxLength the vector's max magnitude
+     * @return the clamped vector
+     */
+    Vector2D clampMagnitude(double maxLength);
 }
