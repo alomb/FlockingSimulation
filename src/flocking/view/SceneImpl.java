@@ -73,6 +73,7 @@ public class SceneImpl extends JPanel implements Scene {
                 g.draw(((UnitImpl) e).getCohesionArea());
                 g.setColor(Color.BLACK);
                 this.drawFigure(g, vertices, ((UnitImpl) e).getAngle());
+                g.draw(((UnitImpl) e).getLine());
             } else {
                 g.setColor(Color.BLUE);
                 this.drawFigure(g, vertices, 0);

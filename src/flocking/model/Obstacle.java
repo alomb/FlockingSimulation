@@ -28,19 +28,18 @@ public class Obstacle implements Entity {
         this.figure = new ArrayList<>();
         this.width = new Random().nextInt(Obstacle.SIZE_BOUND) + SIZE_BOUND / 2;
         this.height = new Random().nextInt(Obstacle.SIZE_BOUND) + SIZE_BOUND / 2;
-        this.figure.add(new Vector2DImpl(this.position.getX() + this.getArea(1).x, 
-                this.position.getY() + this.getArea(1).y));
-        this.figure.add(new Vector2DImpl(this.position.getX() + this.getArea(1).x + this.width, 
-                this.position.getY() + this.getArea(1).y));
-        this.figure.add(new Vector2DImpl(this.position.getX() + this.getArea(1).x + this.width, 
-                this.position.getY() + this.getArea(1).y + this.height));
-        this.figure.add(new Vector2DImpl(this.position.getX() + this.getArea(1).x, 
-                this.position.getY() + this.getArea(1).y + this.height));
+        this.figure.add(new Vector2DImpl(this.position.getX() - this.width / 2, 
+                this.position.getY() - this.height / 2));
+        this.figure.add(new Vector2DImpl(this.position.getX() + this.width / 2, 
+                this.position.getY() - this.height / 2));
+        this.figure.add(new Vector2DImpl(this.position.getX() + this.width / 2, 
+                this.position.getY() + this.height / 2));
+        this.figure.add(new Vector2DImpl(this.position.getX() - this.width / 2, 
+                this.position.getY() + this.height / 2));
     }
 
     @Override
     public final List<Vector2D> getFigure() {
-        System.out.println(figure);
         return Collections.unmodifiableList(this.figure);
     }
 
@@ -66,7 +65,10 @@ public class Obstacle implements Entity {
 
     @Override
     public final Rectangle getArea(final double growFactor) {
-        return new Rectangle(this.width, this.height);
+        return new Rectangle((int) Math.round(this.position.getX() - this.width / 2), 
+                (int) Math.round(this.position.getY() - this.height / 2), 
+                this.width, 
+                this.height);
     }
 
 }

@@ -1,13 +1,16 @@
 package flocking.model;
 
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Arc2D;
+import java.awt.geom.Line2D;
 import java.awt.geom.Path2D;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
 /**
@@ -24,11 +27,14 @@ public class UnitImpl implements Unit {
 
     private static final double MIN_ANGLE = 135;
     private static final double MAX_ANGLE = -270;
-    private static final int DELTA_ANGLE = 45;
+    private static final int DELTA_ANGLE = 10;
 
     private static final int AREA = 20;
-    private static final double MAX_FORCE = 25;
-    private static final double MAX_SPEED = 20;
+    private static final double MAX_FORCE = 100;
+    private static final double MAX_SPEED = 100;
+
+    private static final double MAX_SIGHT = 100;
+    private static final double MAX_AVOIDANCE = 70;
 
     private final int sideLength;
     private final List<Vector2D> figure;
@@ -84,14 +90,23 @@ public class UnitImpl implements Unit {
     public final void update(final float elapsed) {
         if (this.timer <= 0) {
             Vector2D result = new Vector2DImpl(0, 0);
+            //Sum all steering forces
             result = result.sumVector(this.wander());
+            result = result.sumVector(this.collisionAvoidance());
+
             result = result.clampMagnitude(UnitImpl.MAX_FORCE);
             result = result.mulScalar(1 / this.mass);
 
-            System.out.println(this.speed.sumVector(result).lenght());
             final Vector2D finalSpeed = this.speed.sumVector(result).clampMagnitude(UnitImpl.MAX_SPEED);
-            this.position = this.position.sumVector(finalSpeed);
 
+            this.angle = Math.toDegrees(Math.atan2(finalSpeed.getY(), finalSpeed.getX()));
+            if (angle < 0) {
+                angle += 360;
+            } else if (angle > 360) {
+                angle -= 360;
+            }
+
+            this.position = this.position.sumVector(finalSpeed);
             this.speed = this.speed.setAngle(angle);
 
             this.timer = UnitImpl.MAX_TIMER;
@@ -147,13 +162,40 @@ public class UnitImpl implements Unit {
 
         displacement = displacement.rotate(deltaAngle);
 
-        angle += deltaAngle;
-        if (angle < 0) {
-            angle += 360;
-        } else if (angle > 360) {
-            angle -= 360;
+        return displacement.sumVector(center);
+    }
+
+    /**
+     * @return the collision avoidance steering force
+     */
+    private Vector2D collisionAvoidance() {
+        final List<Entity> obstacles = Simulation.getObstacleInPath(this.getLine(), this);
+        if (obstacles.isEmpty()) {
+            return new Vector2DImpl(0, 0);
         }
 
-        return displacement.sumVector(center);
+        final Optional<Entity> obstacle = obstacles.stream().min((o1, o2) -> {
+            return o1.getPosition().sumVector(this.position.mulScalar(-1)).lenght() > o2.getPosition().sumVector(this.position.mulScalar(-1)).lenght()
+            ? 1 : o1.getPosition().sumVector(this.position.mulScalar(-1)).lenght() == o2.getPosition().sumVector(this.position.mulScalar(-1)).lenght()
+                    ? 0 : -1;
+        });
+
+        if (!obstacle.isPresent()) {
+            return new Vector2DImpl(0, 0);
+        }
+
+        final Vector2D sight = this.speed.normalize().mulScalar(UnitImpl.MAX_SIGHT).sumVector(this.position);
+        final Vector2D avoidanceForce = sight.sumVector(obstacle.get().getPosition().mulScalar(-1));
+        return avoidanceForce.normalize().mulScalar(MAX_AVOIDANCE);
+    }
+
+    /**
+     * @return a {@link Line2D} representing the sight
+     */
+    public Line2D.Double getLine() {
+        final Vector2D sight = this.speed.normalize().mulScalar(UnitImpl.MAX_SIGHT).sumVector(this.position);
+        return new Line2D.Double(new Point((int) Math.round(this.position.getX()), (int) Math.round(this.position.getY())),
+                new Point((int) Math.round(sight.getX()), (int) Math.round(sight.getY())));
+
     }
 }
