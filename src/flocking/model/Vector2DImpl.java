@@ -74,4 +74,14 @@ public class Vector2DImpl implements Vector2D {
     public final String toString() {
         return new String("(" + this.x + ", " + this.y + ")");
     }
+
+    @Override
+    public final Vector2D rotate(final double deltaAngle) {
+        final Vector2D result = new Vector2DImpl(this.x, this.y);
+        final double deltaAngleRad = Math.toRadians(deltaAngle);
+
+        result.setX(this.x * Math.cos(deltaAngleRad) - this.y * Math.sin(deltaAngleRad));
+        result.setY(this.x * Math.sin(deltaAngleRad) + this.y * Math.cos(deltaAngleRad));
+        return result;
+    }
 }

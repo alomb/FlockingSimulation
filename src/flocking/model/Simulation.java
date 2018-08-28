@@ -41,14 +41,19 @@ public class Simulation implements Model {
     public final void createEntity() {
         final int sideLength = 10;
         final int maxSize = 700;
-        final int speed = 50;
 
         Simulation.ENTITIES.add(new EntityImpl(new Vector2DImpl(new Random().nextInt(maxSize),
                 new Random().nextInt(maxSize)),
                 sideLength,
-                speed));
+                new Vector2DImpl(new Random().nextInt(20) - 10, 
+                        new Random().nextInt(20) - 10)));
     }
 
+    /**
+     * @param neighborsArea the {@link Shape} to check entities within
+     * @param entity the {@link Entity} which call this 
+     * @return the {@link List} of {@link Entity} within the area
+     */
     public static List<Entity> getNeighbors(final Shape neighborsArea, final Entity entity) {
         return Simulation.ENTITIES.stream().filter(e -> {
             //System.out.println(new Point((int) Math.round(e.getPosition().getX()),

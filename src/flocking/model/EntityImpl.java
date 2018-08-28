@@ -16,13 +16,14 @@ public class EntityImpl implements Entity {
 
     private Vector2D position;
     private double angle;
-    private final double speed;
+    private Vector2D speed;
 
     private int timer;
     private static final int MAX_TIMER = 500;
 
     private static final double MIN_ANGLE = 135;
     private static final double MAX_ANGLE = -270;
+    private static final int DELTA_ANGLE = 45;
 
     private final int sideLength;
     private List<Vector2D> figure;
@@ -32,13 +33,14 @@ public class EntityImpl implements Entity {
      * @param sideLength the {@link Entity} length
      * @param speed the {@link Entity} speed
      */
-    public EntityImpl(final Vector2D startPos, final int sideLength, final double speed) {
-        this.sideLength = sideLength;
-        this.position = startPos;
-        this.angle = 0;
-        this.speed = speed;
+    public EntityImpl(final Vector2D startPos, final int sideLength, final Vector2D speed) {
+        this.position = new Vector2DImpl(startPos);
+        this.speed = new Vector2DImpl(speed);
+        this.angle = Math.toDegrees(Math.atan2(speed.getY(), speed.getX()));
+
         this.timer = EntityImpl.MAX_TIMER;
 
+        this.sideLength = sideLength;
         this.figure = new ArrayList<>();
     }
 
@@ -74,35 +76,42 @@ public class EntityImpl implements Entity {
     @Override
     public final void update(final float elapsed) {
         if (this.timer <= 0) {
-            final Random rnd = new Random();
-            if (rnd.nextBoolean()) {
-                angle += rnd.nextInt(45);
-            } else {
-                angle -= rnd.nextInt(45);
-            }
+            this.position = this.position.sumVector(this.wander());
 
-            if (angle < 0) {
-                angle += 360;
-            } else if (angle > 360) {
-                angle -= 360;
-            }
             this.timer = EntityImpl.MAX_TIMER;
-
-            final double angleRad = Math.toRadians(this.angle);
-            final Vector2D targetPos = new Vector2DImpl(this.position.normalize().getX() * Math.cos(angleRad) * this.speed,
-                    this.position.normalize().getY() * Math.sin(angleRad) * this.speed);
-            this.position = this.position.sumVector(targetPos);
-
-            this.cohesion();
-
         } else {
             this.timer -= elapsed;
         }
     }
 
-    private void cohesion() {
-        final List<Entity> neighbors = Simulation.getNeighbors(this.getCohesionArea(), this);
-        System.out.println(neighbors + " of " + this + " " + this.getPosition());
+    private Vector2D wander() {
+        final Random rnd = new Random();
+        double deltaAngle = rnd.nextInt(EntityImpl.DELTA_ANGLE);
+        if (rnd.nextBoolean()) {
+            deltaAngle = -rnd.nextInt(EntityImpl.DELTA_ANGLE);
+        }
+
+        //Begin previous wander operation code
+        //this.speed = this.speed.rotate(deltaAngle);
+        Vector2D center = new Vector2DImpl(this.speed);
+        center = center.normalize().mulScalar(this.sideLength * 2);
+
+        Vector2D displacement = new Vector2DImpl(0, -1);
+        displacement = displacement.mulScalar(this.sideLength);
+
+        displacement = displacement.rotate(deltaAngle);
+        this.speed = this.speed.rotate(deltaAngle);
+
+        angle += deltaAngle;
+        if (angle < 0) {
+            angle += 360;
+        } else if (angle > 360) {
+            angle -= 360;
+        }
+
+        //End previous wander operation code
+        //return this.speed;
+        return displacement.sumVector(center);
     }
 
     @Override
@@ -112,7 +121,13 @@ public class EntityImpl implements Entity {
                 sideLength * 10,
                 sideLength * 10);
 
-        final Shape arc = new Arc2D.Double(rectangle.x, rectangle.y, rectangle.width, rectangle.height, MIN_ANGLE, MAX_ANGLE, Arc2D.OPEN);
+        final Shape arc = new Arc2D.Double(rectangle.x,
+                rectangle.y, 
+                rectangle.width, 
+                rectangle.height, 
+                MIN_ANGLE, 
+                MAX_ANGLE, 
+                Arc2D.PIE);
 
         final Path2D.Double path = new Path2D.Double();
         path.append(arc, false);

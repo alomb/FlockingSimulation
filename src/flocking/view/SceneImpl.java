@@ -67,7 +67,9 @@ public class SceneImpl extends JPanel implements Scene {
         for (final Entity e : this.controller.getFigures()) {
             final List<Point> vertices = new ArrayList<>();
             e.getFigure().forEach(f -> vertices.add(new Point((int) Math.round(f.getX()), (int) Math.round(f.getY()))));
+            g.setColor(Color.RED);
             g.draw(e.getCohesionArea());
+            g.setColor(Color.BLACK);
             this.drawFigure(g, vertices, e.getAngle());
         }
     }

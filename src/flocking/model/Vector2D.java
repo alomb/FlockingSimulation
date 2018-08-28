@@ -54,4 +54,10 @@ public interface Vector2D {
      */
     Vector2D sumVector(Vector2D vector);
 
+    /**
+     * @param deltaAngle the rotation angle in degrees
+     * @return the vector rotated
+     */
+    Vector2D rotate(double deltaAngle);
+
 }
