@@ -6,13 +6,14 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Arc2D;
 import java.awt.geom.Path2D;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
 /**
  * An implementation of {@link Entity}.
  */
-public class EntityImpl implements Entity {
+public class UnitImpl implements Unit {
 
     private Vector2D position;
     private double angle;
@@ -30,21 +31,21 @@ public class EntityImpl implements Entity {
     private static final double MAX_SPEED = 20;
 
     private final int sideLength;
-    private List<Vector2D> figure;
+    private final List<Vector2D> figure;
     private final double mass;
 
     /**
-     * @param startPos the first {@link Entity}'s {@link Point}
-     * @param sideLength the {@link Entity} length
-     * @param speed the {@link Entity} speed
+     * @param startPos the first {@link Unit}'s {@link Point}
+     * @param sideLength the {@link Unit} length
+     * @param speed the {@link Unit} speed
      */
-    public EntityImpl(final Vector2D startPos, final int sideLength, final Vector2D speed) {
+    public UnitImpl(final Vector2D startPos, final int sideLength, final Vector2D speed) {
         this.position = new Vector2DImpl(startPos);
         this.speed = new Vector2DImpl(speed);
         this.angle = Math.toDegrees(Math.atan2(speed.getY(), speed.getX()));
         this.mass = 10;
 
-        this.timer = EntityImpl.MAX_TIMER;
+        this.timer = UnitImpl.MAX_TIMER;
 
         this.sideLength = sideLength;
         this.figure = new ArrayList<>();
@@ -56,12 +57,12 @@ public class EntityImpl implements Entity {
         this.figure.add(new Vector2DImpl(this.position.getX() - this.sideLength / 2, this.position.getY() - this.sideLength / 2));
         this.figure.add(new Vector2DImpl(this.position.getX() - this.sideLength / 2, this.position.getY() + this.sideLength / 2));
         this.figure.add(new Vector2DImpl(this.position.getX() + this.sideLength, this.position.getY()));
-        return this.figure;
+        return Collections.unmodifiableList(this.figure);
     }
 
     @Override
     public final void setFigure(final List<Vector2D> figure) {
-        this.figure = figure;
+        Collections.copy(this.figure, figure);
     }
 
     @Override
@@ -76,7 +77,7 @@ public class EntityImpl implements Entity {
 
     @Override
     public final void setPosition(final Vector2D position) {
-        this.position = position;
+        this.position = new Vector2DImpl(position);
     }
 
     @Override
@@ -84,26 +85,58 @@ public class EntityImpl implements Entity {
         if (this.timer <= 0) {
             Vector2D result = new Vector2DImpl(0, 0);
             result = result.sumVector(this.wander());
-            result = result.clampMagnitude(EntityImpl.MAX_FORCE);
+            result = result.clampMagnitude(UnitImpl.MAX_FORCE);
             result = result.mulScalar(1 / this.mass);
 
             System.out.println(this.speed.sumVector(result).lenght());
-            final Vector2D finalSpeed = this.speed.sumVector(result).clampMagnitude(EntityImpl.MAX_SPEED);
+            final Vector2D finalSpeed = this.speed.sumVector(result).clampMagnitude(UnitImpl.MAX_SPEED);
             this.position = this.position.sumVector(finalSpeed);
 
             this.speed = this.speed.setAngle(angle);
 
-            this.timer = EntityImpl.MAX_TIMER;
+            this.timer = UnitImpl.MAX_TIMER;
         } else {
             this.timer -= elapsed;
         }
     }
 
+    @Override
+    public final Rectangle getArea(final double growFactor) {
+        return new Rectangle((int) this.position.getX() - sideLength * AREA / 2,
+                (int) this.position.getY() - sideLength * AREA / 2,
+                sideLength * AREA,
+                sideLength * AREA);
+    }
+
+    @Override
+    public final Shape getCohesionArea() {
+        final Rectangle rectangle = this.getArea(AREA);
+
+        final Shape arc = new Arc2D.Double(rectangle.x,
+                rectangle.y, 
+                rectangle.width, 
+                rectangle.height, 
+                MIN_ANGLE, 
+                MAX_ANGLE, 
+                Arc2D.PIE);
+
+        final Path2D.Double path = new Path2D.Double();
+        path.append(arc, false);
+
+        final AffineTransform at = AffineTransform.getRotateInstance(Math.toRadians(angle), this.position.getX(), this.position.getY());
+        path.transform(at);
+
+        return path;
+    }
+
+    /**
+     * @return the wandering steering forces
+     */
     private Vector2D wander() {
         final Random rnd = new Random();
-        double deltaAngle = rnd.nextInt(EntityImpl.DELTA_ANGLE);
+        double deltaAngle = rnd.nextInt(UnitImpl.DELTA_ANGLE);
         if (rnd.nextBoolean()) {
-            deltaAngle = -rnd.nextInt(EntityImpl.DELTA_ANGLE);
+            deltaAngle = -rnd.nextInt(UnitImpl.DELTA_ANGLE);
         }
 
         Vector2D center = new Vector2DImpl(this.speed);
@@ -122,29 +155,5 @@ public class EntityImpl implements Entity {
         }
 
         return displacement.sumVector(center);
-    }
-
-    @Override
-    public final Shape getCohesionArea() {
-        final Rectangle rectangle = new Rectangle((int) this.position.getX() - sideLength * AREA / 2,
-                (int) this.position.getY() - sideLength * AREA / 2,
-                sideLength * AREA,
-                sideLength * AREA);
-
-        final Shape arc = new Arc2D.Double(rectangle.x,
-                rectangle.y, 
-                rectangle.width, 
-                rectangle.height, 
-                MIN_ANGLE, 
-                MAX_ANGLE, 
-                Arc2D.PIE);
-
-        final Path2D.Double path = new Path2D.Double();
-        path.append(arc, false);
-
-        final AffineTransform at = AffineTransform.getRotateInstance(Math.toRadians(angle), this.position.getX(), this.position.getY());
-        path.transform(at);
-
-        return path;
     }
 }

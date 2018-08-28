@@ -16,6 +16,7 @@ import javax.swing.JPanel;
 import flocking.controller.Controller;
 import flocking.controller.input.CreateEntityCommand;
 import flocking.model.Entity;
+import flocking.model.UnitImpl;
 
 /**
  * A generic implementation of {@link Scene}.
@@ -67,10 +68,15 @@ public class SceneImpl extends JPanel implements Scene {
         for (final Entity e : this.controller.getFigures()) {
             final List<Point> vertices = new ArrayList<>();
             e.getFigure().forEach(f -> vertices.add(new Point((int) Math.round(f.getX()), (int) Math.round(f.getY()))));
-            g.setColor(Color.RED);
-            g.draw(e.getCohesionArea());
-            g.setColor(Color.BLACK);
-            this.drawFigure(g, vertices, e.getAngle());
+            if (e instanceof UnitImpl) {
+                g.setColor(Color.RED);
+                g.draw(((UnitImpl) e).getCohesionArea());
+                g.setColor(Color.BLACK);
+                this.drawFigure(g, vertices, ((UnitImpl) e).getAngle());
+            } else {
+                g.setColor(Color.BLUE);
+                this.drawFigure(g, vertices, 0);
+            }
         }
     }
 

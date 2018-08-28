@@ -1,6 +1,6 @@
 package flocking.model;
 
-import java.awt.Shape;
+import java.awt.Rectangle;
 import java.util.List;
 
 /**
@@ -24,11 +24,6 @@ public interface Entity {
     Vector2D getPosition();
 
     /**
-     * @return the entity's rotation angle
-     */
-    double getAngle();
-
-    /**
      * @param position the new {@link Entity}'s central {@link Point}
      */
     void setPosition(Vector2D position);
@@ -39,8 +34,9 @@ public interface Entity {
     void update(float elapsed);
 
     /**
-     * @return a {@link Shape} of the cohesion influence area
+     * @param growFactor a factor to resize the area
+     * @return the unit occupied area multiplied by the factor
      */
-    Shape getCohesionArea();
+    Rectangle getArea(double growFactor);
 
 }
