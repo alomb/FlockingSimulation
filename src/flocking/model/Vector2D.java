@@ -28,7 +28,7 @@ public interface Vector2D {
     /**
      * @return the vector length
      */
-    double lenght();
+    double length();
 
     /**
      * @return the vector normalized
@@ -71,4 +71,10 @@ public interface Vector2D {
      * @return the clamped vector
      */
     Vector2D clampMagnitude(double maxLength);
+
+    /**
+     * @param v the other vector
+     * @return the distance beetween them
+     */
+    double distance(Vector2D v);
 }

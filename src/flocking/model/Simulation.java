@@ -25,11 +25,7 @@ public class Simulation implements Model {
      */
     public Simulation() {
         recalculate();
-        IntStream.range(0, Simulation.OBSTACLE_NUMBER).forEach(i -> {
-            final Random rnd = new Random();
-            Simulation.OBSTACLES.add(new Obstacle(new Vector2DImpl(rnd.nextInt((int) Toolkit.getDefaultToolkit().getScreenSize().getWidth()),
-                rnd.nextInt((int) Toolkit.getDefaultToolkit().getScreenSize().getHeight()))));
-        });
+        this.setObstacles();
     }
 
     @Override
@@ -93,6 +89,26 @@ public class Simulation implements Model {
         return Simulation.OBSTACLES.stream().filter(e -> {
             return sight.intersects(e.getArea(1));
         }).collect(Collectors.toList());
+    }
+
+    private void setObstacles() {
+
+        final int y = (int) Math.round(Toolkit.getDefaultToolkit().getScreenSize().getHeight());
+        final int x = (int) Math.round(Toolkit.getDefaultToolkit().getScreenSize().getWidth());
+        final int maxSize = 30;
+
+        //Boundary obstacles
+        Simulation.OBSTACLES.add(new Obstacle(new Vector2DImpl(0, y / 2), maxSize, y));
+        Simulation.OBSTACLES.add(new Obstacle(new Vector2DImpl(x / 2, 0), x, maxSize));
+        Simulation.OBSTACLES.add(new Obstacle(new Vector2DImpl(x / 2, y - maxSize), x, maxSize));
+        Simulation.OBSTACLES.add(new Obstacle(new Vector2DImpl(x, y / 2), maxSize, y));
+
+        //Random obstacles
+        IntStream.range(0, Simulation.OBSTACLE_NUMBER).forEach(i -> {
+            final Random rnd = new Random();
+            Simulation.OBSTACLES.add(new Obstacle(new Vector2DImpl(rnd.nextInt(x),
+                rnd.nextInt(y)), maxSize));
+        });
     }
 
 }

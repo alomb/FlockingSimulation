@@ -17,17 +17,17 @@ public class Obstacle implements Entity {
     private final int width;
     private final int height;
 
-    private static final int SIZE_BOUND = 30;
-
-
     /**
+     * Create an obstacle of random size.
      * @param startPos the first position
+     * @param width the obstacle's width
+     * @param heigth the obstacle's height
      */
-    public Obstacle(final Vector2D startPos) {
+    public Obstacle(final Vector2D startPos, final int width, final int heigth) {
         this.position = new Vector2DImpl(startPos);
         this.figure = new ArrayList<>();
-        this.width = new Random().nextInt(Obstacle.SIZE_BOUND) + SIZE_BOUND / 2;
-        this.height = new Random().nextInt(Obstacle.SIZE_BOUND) + SIZE_BOUND / 2;
+        this.width = width;
+        this.height = heigth;
         this.figure.add(new Vector2DImpl(this.position.getX() - this.width / 2, 
                 this.position.getY() - this.height / 2));
         this.figure.add(new Vector2DImpl(this.position.getX() + this.width / 2, 
@@ -36,6 +36,17 @@ public class Obstacle implements Entity {
                 this.position.getY() + this.height / 2));
         this.figure.add(new Vector2DImpl(this.position.getX() - this.width / 2, 
                 this.position.getY() + this.height / 2));
+    }
+
+    /**
+     * Create an obstacle of random size.
+     * @param startPos the first position
+     * @param maxSize the width and height max size (maxSize + maxSize / 2) and min size (maxSize / 2)
+     */
+    public Obstacle(final Vector2D startPos, final int maxSize) {
+        this(startPos, 
+                new Random().nextInt(maxSize) + maxSize / 2, 
+                new Random().nextInt(maxSize) + maxSize / 2);
     }
 
     @Override

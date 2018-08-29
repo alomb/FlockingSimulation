@@ -25,6 +25,8 @@ public class SceneImpl extends JPanel implements Scene {
 
     private final Controller controller;
 
+    private boolean toogleGizmos;
+
     /**
      * 
      */
@@ -39,7 +41,8 @@ public class SceneImpl extends JPanel implements Scene {
         super();
         this.controller = controller;
         this.setSize(w, h);
-        this.setBackground(Color.WHITE);
+        this.setBackground(Color.BLACK);
+        this.toogleGizmos = true;
     }
 
     @Override
@@ -69,13 +72,15 @@ public class SceneImpl extends JPanel implements Scene {
             final List<Point> vertices = new ArrayList<>();
             e.getFigure().forEach(f -> vertices.add(new Point((int) Math.round(f.getX()), (int) Math.round(f.getY()))));
             if (e instanceof UnitImpl) {
-                g.setColor(Color.RED);
-                g.draw(((UnitImpl) e).getCohesionArea());
-                g.setColor(Color.BLACK);
+                if (this.toogleGizmos) {
+                    g.setColor(Color.RED);
+                    g.draw(((UnitImpl) e).getCohesionArea());
+                    g.draw(((UnitImpl) e).getLine());
+                }
+                g.setColor(Color.WHITE);
                 this.drawFigure(g, vertices, ((UnitImpl) e).getAngle());
-                g.draw(((UnitImpl) e).getLine());
             } else {
-                g.setColor(Color.BLUE);
+                g.setColor(Color.WHITE);
                 this.drawFigure(g, vertices, 0);
             }
         }
@@ -83,7 +88,9 @@ public class SceneImpl extends JPanel implements Scene {
 
     @Override
     public final void keyTyped(final KeyEvent e) {
-
+        if (e.getKeyChar() == 't') {
+            this.toogleGizmos = !this.toogleGizmos;
+        }
     }
 
     @Override

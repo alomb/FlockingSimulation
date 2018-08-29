@@ -46,13 +46,13 @@ public class Vector2DImpl implements Vector2D {
     }
 
     @Override
-    public final double lenght() {
+    public final double length() {
         return Math.sqrt(this.x * this.x + this.y * this.y);
     }
 
     @Override
     public final Vector2D normalize() {
-        return new Vector2DImpl(this.x / this.lenght(), this.y / this.lenght());
+        return new Vector2DImpl(this.x / this.length(), this.y / this.length());
     }
 
     @Override
@@ -82,7 +82,7 @@ public class Vector2DImpl implements Vector2D {
 
     @Override
     public final Vector2D setAngle(final double angle) {
-        final double length = this.lenght();
+        final double length = this.length();
 
         return new Vector2DImpl(Math.cos(Math.toRadians(angle)) * length, 
                 Math.sin(Math.toRadians(angle)) * length);
@@ -90,9 +90,10 @@ public class Vector2DImpl implements Vector2D {
 
     @Override
     public final Vector2D clampMagnitude(final double maxLength) {
-        if (this.lenght() > maxLength) {
-            return new Vector2DImpl(this.x * maxLength / this.lenght(),
-                    this.y * maxLength / this.lenght());
+        if (this.length() > maxLength) {
+            final double length = this.length();
+            return new Vector2DImpl(this.x * maxLength / length,
+                    this.y * maxLength / length);
         }
 
         return this;
@@ -101,5 +102,10 @@ public class Vector2DImpl implements Vector2D {
     @Override
     public final String toString() {
         return new String("(" + this.x + ", " + this.y + ")");
+    }
+
+    @Override
+    public final double distance(final Vector2D v) {
+        return Math.sqrt(Math.pow(this.x - v.getX(), 2) + Math.pow(this.y - v.getY(), 2));
     }
 }

@@ -30,12 +30,14 @@ public class UnitImpl implements Unit {
     private static final int DELTA_ANGLE = 20;
 
     private static final int AREA = 20;
-    private static final double MAX_FORCE = 150;
-    private static final double MAX_SPEED = 150;
+    private static final double MAX_FORCE = 200;
+    private static final double MAX_SPEED = 200;
 
-    private static final double MAX_SIGHT = 100;
-    private static final double MAX_AVOIDANCE = 125;
+    private static final double MAX_SIGHT = 25;
+    private static final double MAX_AVOIDANCE = 165;
+
     private static final double MAX_COHESION = 75;
+    private static final double MIN_COHESION_DISTANCE = 20;
 
     private final int sideLength;
     private final List<Vector2D> figure;
@@ -177,8 +179,8 @@ public class UnitImpl implements Unit {
         }
 
         final Optional<Entity> obstacle = obstacles.stream().min((o1, o2) -> {
-            return o1.getPosition().sumVector(this.position.mulScalar(-1)).lenght() > o2.getPosition().sumVector(this.position.mulScalar(-1)).lenght()
-            ? 1 : o1.getPosition().sumVector(this.position.mulScalar(-1)).lenght() == o2.getPosition().sumVector(this.position.mulScalar(-1)).lenght()
+            return o1.getPosition().sumVector(this.position.mulScalar(-1)).length() > o2.getPosition().sumVector(this.position.mulScalar(-1)).length()
+            ? 1 : o1.getPosition().sumVector(this.position.mulScalar(-1)).length() == o2.getPosition().sumVector(this.position.mulScalar(-1)).length()
                     ? 0 : -1;
         });
 
@@ -210,13 +212,22 @@ public class UnitImpl implements Unit {
             return new Vector2DImpl(0, 0);
         }
 
+        double counter = 0;
         Vector2D centroid = new Vector2DImpl(0, 0);
         for (final Entity n : neighbors) {
-            centroid = centroid.sumVector(n.getPosition());
+            if (n.getPosition().distance(this.getPosition()) > UnitImpl.MIN_COHESION_DISTANCE) {
+                centroid = centroid.sumVector(n.getPosition());
+                counter++;
+            }
         }
 
-        centroid = centroid.mulScalar(1 / neighbors.size());
-        final Vector2D cohesionForce = centroid.sumVector(this.getPosition().mulScalar(-1));
-        return cohesionForce.normalize().mulScalar(UnitImpl.MAX_COHESION);
+        if (counter != 0) {
+            centroid = centroid.mulScalar(1 / counter);
+            final Vector2D cohesionForce = centroid.sumVector(this.position.mulScalar(-1));
+            System.out.println("A " + centroid);
+            return cohesionForce.normalize().mulScalar(UnitImpl.MAX_COHESION);
+        }
+
+        return new Vector2DImpl(0, 0);
     }
 }
