@@ -16,6 +16,7 @@ public class ControllerImpl implements Controller {
     private final Loop engine;
     private final Model model;
     private final View view;
+    private boolean paused;
 
     /**
      * @param view the application {@link View}
@@ -41,6 +42,16 @@ public class ControllerImpl implements Controller {
     @Override
     public final List<Entity> getFigures() {
         return this.model.getFigures();
+    }
+
+    @Override
+    public final void pause() {
+        if (this.paused) {
+            this.engine.resume();
+        } else {
+            this.engine.pause();
+        }
+        this.paused = !this.paused;
     }
 
 }

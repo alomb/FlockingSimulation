@@ -18,7 +18,8 @@ public class Simulation implements Model {
 
     private static final List<Unit> UNITS = new ArrayList<>();
     private static final List<Entity> OBSTACLES = new ArrayList<>();
-    private static final int OBSTACLE_NUMBER = 20;
+    private static final int OBSTACLES_NUMBER = 20;
+    private static final int ENTITIES_NUMBER = 1500;
 
     /**
      * Initialize variables.
@@ -26,6 +27,10 @@ public class Simulation implements Model {
     public Simulation() {
         recalculate();
         this.setObstacles();
+        //Random obstacles
+        IntStream.range(0, Simulation.ENTITIES_NUMBER).forEach(i -> {
+            this.createEntity();
+        });
     }
 
     @Override
@@ -49,7 +54,7 @@ public class Simulation implements Model {
     @Override
     public final void createEntity() {
         final int sideLength = 8;
-        final int speed = 12;
+        final int speed = 8;
         final Random rnd = new Random();
 
         /*
@@ -104,7 +109,7 @@ public class Simulation implements Model {
         Simulation.OBSTACLES.add(new Obstacle(new Vector2DImpl(x, y / 2), maxSize, y));
 
         //Random obstacles
-        IntStream.range(0, Simulation.OBSTACLE_NUMBER).forEach(i -> {
+        IntStream.range(0, Simulation.OBSTACLES_NUMBER).forEach(i -> {
             final Random rnd = new Random();
             Simulation.OBSTACLES.add(new Obstacle(new Vector2DImpl(rnd.nextInt(x),
                 rnd.nextInt(y)), maxSize));

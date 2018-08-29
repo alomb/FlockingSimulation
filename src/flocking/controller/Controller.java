@@ -24,4 +24,9 @@ public interface Controller {
      * @return the figures to be drawn
      */
     List<Entity> getFigures();
+
+    /**
+     * Pause the simualtion.
+     */
+    void pause();
 }

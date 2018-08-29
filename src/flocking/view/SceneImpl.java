@@ -42,7 +42,6 @@ public class SceneImpl extends JPanel implements Scene {
         this.controller = controller;
         this.setSize(w, h);
         this.setBackground(Color.BLACK);
-        this.toogleGizmos = true;
     }
 
     @Override
@@ -73,14 +72,14 @@ public class SceneImpl extends JPanel implements Scene {
             e.getFigure().forEach(f -> vertices.add(new Point((int) Math.round(f.getX()), (int) Math.round(f.getY()))));
             if (e instanceof UnitImpl) {
                 if (this.toogleGizmos) {
-                    g.setColor(Color.RED);
+                    g.setColor(Color.GRAY);
                     g.draw(((UnitImpl) e).getCohesionArea());
                     g.draw(((UnitImpl) e).getLine());
                 }
-                g.setColor(Color.WHITE);
+                g.setColor(Color.GREEN);
                 this.drawFigure(g, vertices, ((UnitImpl) e).getAngle());
             } else {
-                g.setColor(Color.WHITE);
+                g.setColor(Color.GREEN);
                 this.drawFigure(g, vertices, 0);
             }
         }
@@ -97,6 +96,8 @@ public class SceneImpl extends JPanel implements Scene {
     public final void keyPressed(final KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_ENTER) {
             this.controller.notifyCommand(new CreateEntityCommand());
+        } else if (e.getKeyChar() == 'p') {
+            this.controller.pause();
         }
     }
 

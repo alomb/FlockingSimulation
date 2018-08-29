@@ -111,9 +111,7 @@ public class Engine implements Loop {
      * The method used to update graphics (View).
      */
     private void render() {
-        if (!this.stopped) {
-            this.scene.render();
-        }
+        this.scene.render();
     }
 
     @Override
