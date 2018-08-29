@@ -25,16 +25,17 @@ public class UnitImpl implements Unit {
     private int timer;
     private static final int MAX_TIMER = 500;
 
-    private static final double MIN_ANGLE = 135;
-    private static final double MAX_ANGLE = -270;
-    private static final int DELTA_ANGLE = 10;
+    private static final double MIN_ANGLE = 150;
+    private static final double MAX_ANGLE = -295;
+    private static final int DELTA_ANGLE = 20;
 
     private static final int AREA = 20;
-    private static final double MAX_FORCE = 100;
-    private static final double MAX_SPEED = 100;
+    private static final double MAX_FORCE = 150;
+    private static final double MAX_SPEED = 150;
 
     private static final double MAX_SIGHT = 100;
-    private static final double MAX_AVOIDANCE = 70;
+    private static final double MAX_AVOIDANCE = 125;
+    private static final double MAX_COHESION = 75;
 
     private final int sideLength;
     private final List<Vector2D> figure;
@@ -92,7 +93,8 @@ public class UnitImpl implements Unit {
             Vector2D result = new Vector2DImpl(0, 0);
             //Sum all steering forces
             result = result.sumVector(this.wander());
-            result = result.sumVector(this.collisionAvoidance());
+            result = result.sumVector(this.obstacleAvoidance());
+            result = result.sumVector(this.cohesion());
 
             result = result.clampMagnitude(UnitImpl.MAX_FORCE);
             result = result.mulScalar(1 / this.mass);
@@ -168,7 +170,7 @@ public class UnitImpl implements Unit {
     /**
      * @return the collision avoidance steering force
      */
-    private Vector2D collisionAvoidance() {
+    private Vector2D obstacleAvoidance() {
         final List<Entity> obstacles = Simulation.getObstacleInPath(this.getLine(), this);
         if (obstacles.isEmpty()) {
             return new Vector2DImpl(0, 0);
@@ -186,7 +188,7 @@ public class UnitImpl implements Unit {
 
         final Vector2D sight = this.speed.normalize().mulScalar(UnitImpl.MAX_SIGHT).sumVector(this.position);
         final Vector2D avoidanceForce = sight.sumVector(obstacle.get().getPosition().mulScalar(-1));
-        return avoidanceForce.normalize().mulScalar(MAX_AVOIDANCE);
+        return avoidanceForce.normalize().mulScalar(UnitImpl.MAX_AVOIDANCE);
     }
 
     /**
@@ -197,5 +199,24 @@ public class UnitImpl implements Unit {
         return new Line2D.Double(new Point((int) Math.round(this.position.getX()), (int) Math.round(this.position.getY())),
                 new Point((int) Math.round(sight.getX()), (int) Math.round(sight.getY())));
 
+    }
+
+    /**
+     * @return the cohesion rule steering force
+     */
+    private Vector2D cohesion() {
+        final List<Entity> neighbors = Simulation.getNeighbors(this.getCohesionArea(), this);
+        if (neighbors.isEmpty()) {
+            return new Vector2DImpl(0, 0);
+        }
+
+        Vector2D centroid = new Vector2DImpl(0, 0);
+        for (final Entity n : neighbors) {
+            centroid = centroid.sumVector(n.getPosition());
+        }
+
+        centroid = centroid.mulScalar(1 / neighbors.size());
+        final Vector2D cohesionForce = centroid.sumVector(this.getPosition().mulScalar(-1));
+        return cohesionForce.normalize().mulScalar(UnitImpl.MAX_COHESION);
     }
 }
