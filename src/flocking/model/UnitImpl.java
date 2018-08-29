@@ -97,6 +97,7 @@ public class UnitImpl implements Unit {
             result = result.sumVector(this.wander());
             result = result.sumVector(this.obstacleAvoidance());
             result = result.sumVector(this.cohesion());
+            result = result.sumVector(this.align());
 
             result = result.clampMagnitude(UnitImpl.MAX_FORCE);
             result = result.mulScalar(1 / this.mass);
@@ -146,6 +147,11 @@ public class UnitImpl implements Unit {
         path.transform(at);
 
         return path;
+    }
+
+    @Override
+    public final Vector2D getSpeed() {
+        return new Vector2DImpl(this.speed);
     }
 
     /**
@@ -222,6 +228,33 @@ public class UnitImpl implements Unit {
             centroid = centroid.mulScalar(1 / counter);
             final Vector2D cohesionForce = centroid.sumVector(this.position.mulScalar(-1));
             return cohesionForce.normalize().mulScalar(UnitImpl.MAX_COHESION);
+        }
+
+        return new Vector2DImpl(0, 0);
+    }
+
+    /**
+     * @return the alignment rule steering force
+     */
+    private Vector2D align() {
+        final List<Entity> neighbors = Simulation.getNeighbors(this.getCohesionArea(), this);
+        if (neighbors.isEmpty()) {
+            return new Vector2DImpl(0, 0);
+        }
+
+        double counter = 0;
+        Vector2D averageSpeed = new Vector2DImpl(0, 0);
+        for (final Entity n : neighbors) {
+            if (n.getPosition().distance(this.getPosition()) > UnitImpl.MIN_COHESION_DISTANCE) {
+                averageSpeed = averageSpeed.sumVector(n.getPosition());
+                counter++;
+            }
+        }
+
+        if (counter != 0) {
+            averageSpeed = averageSpeed.mulScalar(1 / counter);
+            final Vector2D cohesionForce = averageSpeed.sumVector(this.speed.mulScalar(-1));
+            return cohesionForce.normalize().mulScalar(1f / 2f);
         }
 
         return new Vector2DImpl(0, 0);

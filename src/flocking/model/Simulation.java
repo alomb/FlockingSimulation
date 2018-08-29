@@ -19,7 +19,7 @@ public class Simulation implements Model {
     private static final List<Unit> UNITS = new ArrayList<>();
     private static final List<Entity> OBSTACLES = new ArrayList<>();
     private static final int OBSTACLES_NUMBER = 20;
-    private static final int ENTITIES_NUMBER = 1500;
+    private static final int ENTITIES_NUMBER = 0;
 
     /**
      * Initialize variables.

@@ -13,6 +13,11 @@ public interface Unit extends Entity {
     Shape getCohesionArea();
 
     /**
+     * @return a {@link Vector2D} representing the speed
+     */
+    Vector2D getSpeed();
+
+    /**
      * @return the entity's rotation angle
      */
     double getAngle();
