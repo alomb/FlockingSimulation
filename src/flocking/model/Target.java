@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import flocking.view.ViewImpl;
+
 /**
  * An entity implementation of an object who change position randomly at a fixed time.
  */
@@ -22,7 +24,7 @@ public class Target implements Entity {
      */
     public Target() {
         this.currentTimer = MAX_TIMER;
-        this.position = new Vector2DImpl(0, 0);
+        this.getRandomPosition();
     }
 
     @Override
@@ -49,9 +51,7 @@ public class Target implements Entity {
     public final void update(final float elapsed) {
         if (this.currentTimer >= Target.MAX_TIMER) {
             this.currentTimer = 0;
-            final Random rnd = new Random();
-            this.position = new Vector2DImpl(rnd.nextInt((int) Toolkit.getDefaultToolkit().getScreenSize().getWidth()),
-                    rnd.nextInt((int) Toolkit.getDefaultToolkit().getScreenSize().getHeight()));
+            this.getRandomPosition();
         } else {
             this.currentTimer += elapsed;
         }
@@ -63,6 +63,12 @@ public class Target implements Entity {
                 (int) Math.round(this.position.getY()), 
                 Target.SIZE,
                 Target.SIZE);
+    }
+
+    private void getRandomPosition() {
+        final Random rnd = new Random();
+        this.position = new Vector2DImpl(rnd.nextInt((int) Toolkit.getDefaultToolkit().getScreenSize().getWidth()),
+                rnd.nextInt((int) Toolkit.getDefaultToolkit().getScreenSize().getHeight() - ViewImpl.TEXT_HEIGHT));
     }
 
 }

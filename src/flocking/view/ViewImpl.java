@@ -9,7 +9,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
-import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JSplitPane;
 import javax.swing.SwingUtilities;
@@ -28,7 +27,10 @@ public class ViewImpl implements View {
 
     private final int width;
     private final int height;
-    private final int textHeight;
+    /**
+     * The text panel y position choordinate.
+     */
+    public static final int TEXT_HEIGHT = 75;
 
     /**
      * Initialize the frame and the window.
@@ -37,7 +39,6 @@ public class ViewImpl implements View {
 
         this.height = (int) Toolkit.getDefaultToolkit().getScreenSize().getHeight();
         this.width = (int) Toolkit.getDefaultToolkit().getScreenSize().getWidth();
-        this.textHeight = 75;
         this.frame = new JFrame("FlockMovement");
         this.frame.setSize(this.width, this.height);
         this.frame.setMinimumSize(new Dimension(this.width, this.height));
@@ -59,7 +60,7 @@ public class ViewImpl implements View {
             }
         });
 
-        this.scene = new SimulationScene(this.width, this.height - this.textHeight, controller);
+        this.scene = new SimulationScene(this.width, this.height - ViewImpl.TEXT_HEIGHT, controller);
         ((Component) this.scene).addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(final MouseEvent e) {
@@ -68,7 +69,7 @@ public class ViewImpl implements View {
             }
         });
 
-        this.textPanel = new TextScene(this.width, this.textHeight, controller);
+        this.textPanel = new TextScene(this.width, ViewImpl.TEXT_HEIGHT, controller);
         ((Component) this.textPanel).addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(final MouseEvent e) {
@@ -78,7 +79,7 @@ public class ViewImpl implements View {
         });
 
         this.splitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
-        this.splitPane.setDividerLocation(this.height - this.textHeight);
+        this.splitPane.setDividerLocation(this.height - ViewImpl.TEXT_HEIGHT);
         this.splitPane.setTopComponent((Component) this.scene);
         this.splitPane.setBottomComponent((Component) this.textPanel);
         this.splitPane.setEnabled(false);

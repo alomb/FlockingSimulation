@@ -63,6 +63,8 @@ public class UnitImpl implements Unit {
 
         this.sideLength = sideLength;
         this.figure = new ArrayList<>();
+
+        this.isWander = true;
     }
 
     @Override

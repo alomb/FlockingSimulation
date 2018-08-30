@@ -20,7 +20,7 @@ public class TextScene extends JPanel implements Scene {
      * 
      */
     private static final long serialVersionUID = -5995731189455386061L;
-    private String commands = "s";
+    private String commands = "r";
 
     private final Controller controller;
 

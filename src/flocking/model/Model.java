@@ -18,11 +18,6 @@ public interface Model {
     List<Entity> getFigures();
 
     /**
-     * 
-     */
-    void recalculate();
-
-    /**
      * @param command a string representing commands
      */
     void executeCommands(String command);

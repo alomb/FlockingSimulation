@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import flocking.controller.Controller;
+import flocking.view.ViewImpl;
 
 /**
  * The simulation environment.
@@ -38,12 +39,8 @@ public class Simulation implements Model {
      */
     public Simulation(final Controller controller) {
         this.controller = controller;
-        recalculate();
-        this.setObstacles();
-        //Random obstacles
-        IntStream.range(0, Simulation.ENTITIES_NUMBER).forEach(i -> {
-            this.createEntity();
-        });
+        this.wander = true;
+        this.clean();
     }
 
     @Override
@@ -66,18 +63,17 @@ public class Simulation implements Model {
     }
 
     @Override
-    public final void recalculate() {
-        Simulation.UNITS.clear();
-    }
-
-    @Override
     public final void executeCommands(final String command) {
         switch (command) {
         case "c" : 
             this.createEntity();
             break;
-        case "s" : 
+        case "p" : 
             this.controller.pause();
+            break;
+        case "r" : 
+            this.clean();
+            this.recalculate();
             break;
         case "w" : 
             this.wander = !this.wander;
@@ -113,6 +109,19 @@ public class Simulation implements Model {
         }).collect(Collectors.toList());
     }
 
+    private void recalculate() {
+        this.setObstacles();
+        //Random obstacles
+        IntStream.range(0, Simulation.ENTITIES_NUMBER).forEach(i -> {
+            this.createEntity();
+        });
+    }
+
+    private void clean() {
+        Simulation.UNITS.clear();
+        Simulation.OBSTACLES.clear();
+    }
+
     private void createEntity() {
         final int sideLength = 6;
         final int speed = 6;
@@ -125,7 +134,7 @@ public class Simulation implements Model {
                 new Vector2DImpl(10, 0)));
         */
         Simulation.UNITS.add(new UnitImpl(new Vector2DImpl(rnd.nextInt((int) Toolkit.getDefaultToolkit().getScreenSize().getWidth()),
-                rnd.nextInt((int) Toolkit.getDefaultToolkit().getScreenSize().getHeight())),
+                rnd.nextInt((int) Toolkit.getDefaultToolkit().getScreenSize().getHeight() - ViewImpl.TEXT_HEIGHT / 2)),
                 sideLength,
                 new Vector2DImpl(rnd.nextBoolean() ? speed : -speed,
                         rnd.nextBoolean() ? speed : -speed)));
@@ -134,7 +143,7 @@ public class Simulation implements Model {
 
     private void setObstacles() {
 
-        final int y = (int) Math.round(Toolkit.getDefaultToolkit().getScreenSize().getHeight());
+        final int y = (int) Math.round(Toolkit.getDefaultToolkit().getScreenSize().getHeight() - ViewImpl.TEXT_HEIGHT / 2);
         final int x = (int) Math.round(Toolkit.getDefaultToolkit().getScreenSize().getWidth());
         final int maxSize = 30;
 
