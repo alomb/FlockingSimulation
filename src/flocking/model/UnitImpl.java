@@ -25,18 +25,19 @@ public class UnitImpl implements Unit {
     private int timer;
     private static final int MAX_TIMER = 400;
 
+    //150 , -295 :: 30 , -330 :: 90 , -270 :: 0 , -360
     private static final double MIN_ANGLE = 150;
     private static final double MAX_ANGLE = -295;
     private static final int DELTA_ANGLE = 20;
 
     private static final int AREA = 15;
-    private static final double MAX_FORCE = 100;
-    private static final double MAX_SPEED = 100;
+    private static final double MAX_FORCE = 200;
+    private static final double MAX_SPEED = 200;
 
     private static final double MAX_SIGHT = 15;
-    private static final double MAX_AVOIDANCE = 150;
+    private static final double MAX_AVOIDANCE = 200;
 
-    private static final double MAX_COHESION = 50;
+    private static final double MAX_COHESION = 100;
     private static final double MIN_COHESION_DISTANCE = 10;
 
     private final int sideLength;
@@ -98,6 +99,7 @@ public class UnitImpl implements Unit {
             result = result.sumVector(this.obstacleAvoidance());
             result = result.sumVector(this.cohesion());
             result = result.sumVector(this.align());
+            result = result.sumVector(this.separate());
 
             result = result.clampMagnitude(UnitImpl.MAX_FORCE);
             result = result.mulScalar(1 / this.mass);
@@ -181,9 +183,17 @@ public class UnitImpl implements Unit {
             return new Vector2DImpl(0, 0);
         }
 
+        /*
         final Optional<Entity> obstacle = obstacles.stream().min((o1, o2) -> {
             return o1.getPosition().sumVector(this.position.mulScalar(-1)).length() > o2.getPosition().sumVector(this.position.mulScalar(-1)).length()
             ? 1 : o1.getPosition().sumVector(this.position.mulScalar(-1)).length() == o2.getPosition().sumVector(this.position.mulScalar(-1)).length()
+                    ? 0 : -1;
+        });
+        */
+
+        final Optional<Entity> obstacle = obstacles.stream().min((o1, o2) -> {
+            return o1.getPosition().distance(this.position) > o2.getPosition().distance(this.position) 
+                    ? 1 : o1.getPosition().distance(this.position) == o2.getPosition().distance(this.position) 
                     ? 0 : -1;
         });
 
@@ -258,5 +268,24 @@ public class UnitImpl implements Unit {
         }
 
         return new Vector2DImpl(0, 0);
+    }
+
+    /**
+     * @return the separation rule steering force
+     */
+    private Vector2D separate() {
+        final List<Entity> neighbors = Simulation.getNeighbors(this.getCohesionArea(), this);
+        if (neighbors.isEmpty()) {
+            return new Vector2DImpl(0, 0);
+        }
+
+        Vector2D separationForce = new Vector2DImpl(0, 0);
+        for (final Entity n : neighbors) {
+            if (n.getPosition().distance(this.getPosition()) < UnitImpl.MIN_COHESION_DISTANCE) {
+                separationForce = separationForce.sumVector((n.getPosition().sumVector(this.getPosition().mulScalar(-1))).mulScalar(-1));
+            }
+        }
+
+        return separationForce.mulScalar(MAX_COHESION * 2f / 3f);
     }
 }

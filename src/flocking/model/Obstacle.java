@@ -16,6 +16,7 @@ public class Obstacle implements Entity {
 
     private final int width;
     private final int height;
+    private static final Random RND = new Random();
 
     /**
      * Create an obstacle of random size.
@@ -45,8 +46,8 @@ public class Obstacle implements Entity {
      */
     public Obstacle(final Vector2D startPos, final int maxSize) {
         this(startPos, 
-                new Random().nextInt(maxSize) + maxSize / 2, 
-                new Random().nextInt(maxSize) + maxSize / 2);
+                RND.nextInt(maxSize) + maxSize / 2, 
+                RND.nextInt(maxSize) + maxSize / 2);
     }
 
     @Override
@@ -71,7 +72,7 @@ public class Obstacle implements Entity {
 
     @Override
     public final void update(final float elapsed) {
- 
+
     }
 
     @Override

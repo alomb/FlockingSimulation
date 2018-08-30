@@ -26,6 +26,9 @@ public class SceneImpl extends JPanel implements Scene {
     private final Controller controller;
 
     private boolean toogleGizmos;
+    private final Color obstacleColor = new Color(5, 205, 50, 150);
+    private final Color unitColor = new Color(5, 205, 50, 255);
+
 
     /**
      * 
@@ -76,11 +79,11 @@ public class SceneImpl extends JPanel implements Scene {
                     g.draw(((UnitImpl) e).getCohesionArea());
                     g.draw(((UnitImpl) e).getLine());
                 }
-                g.setColor(Color.GREEN);
+                g.setColor(this.unitColor);
                 this.drawFigure(g, vertices, ((UnitImpl) e).getAngle());
             } else {
-                g.setColor(Color.GREEN);
-                this.drawFigure(g, vertices, 0);
+                g.setColor(this.obstacleColor);
+                g.fillRect(e.getArea(1).x, e.getArea(1).y, e.getArea(1).width, e.getArea(1).height);
             }
         }
     }
