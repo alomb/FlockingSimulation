@@ -16,6 +16,7 @@ import javax.swing.JPanel;
 import flocking.controller.Controller;
 import flocking.controller.input.CreateEntityCommand;
 import flocking.model.Entity;
+import flocking.model.Target;
 import flocking.model.UnitImpl;
 
 /**
@@ -28,6 +29,7 @@ public class SceneImpl extends JPanel implements Scene {
     private boolean toogleGizmos;
     private final Color obstacleColor = new Color(5, 205, 50, 150);
     private final Color unitColor = new Color(5, 205, 50, 255);
+    private final Color targetColor = new Color(205, 92, 92, 150);
 
 
     /**
@@ -81,6 +83,9 @@ public class SceneImpl extends JPanel implements Scene {
                 }
                 g.setColor(this.unitColor);
                 this.drawFigure(g, vertices, ((UnitImpl) e).getAngle());
+            } else if (e instanceof Target) {
+                g.setColor(this.targetColor);
+                g.fillRect(e.getArea(1).x, e.getArea(1).y, e.getArea(1).width, e.getArea(1).height);
             } else {
                 g.setColor(this.obstacleColor);
                 g.fillRect(e.getArea(1).x, e.getArea(1).y, e.getArea(1).width, e.getArea(1).height);

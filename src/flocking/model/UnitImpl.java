@@ -1,5 +1,6 @@
 package flocking.model;
 
+
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Shape;
@@ -95,10 +96,12 @@ public class UnitImpl implements Unit {
         if (this.timer <= 0) {
             Vector2D result = new Vector2DImpl(0, 0);
             //Sum all steering forces
-            result = result.sumVector(this.wander());
+            //result = result.sumVector(this.wander());
+            result = result.sumVector(this.seek());
+
             result = result.sumVector(this.obstacleAvoidance());
-            result = result.sumVector(this.cohesion());
-            result = result.sumVector(this.align());
+            //result = result.sumVector(this.cohesion());
+            //result = result.sumVector(this.align());
             result = result.sumVector(this.separate());
 
             result = result.clampMagnitude(UnitImpl.MAX_FORCE);
@@ -157,7 +160,7 @@ public class UnitImpl implements Unit {
     }
 
     /**
-     * @return the wandering steering forces
+     * @return the wander steering forces
      */
     private Vector2D wander() {
         final Random rnd = new Random();
@@ -172,6 +175,16 @@ public class UnitImpl implements Unit {
         center = center.rotate(deltaAngle);
 
         return center;
+    }
+
+    /**
+     * @return the seek steering forces
+     */
+    private Vector2D seek() {
+        final Vector2D target = new Vector2DImpl(Simulation.TARGET.getPosition().getX(), 
+                Simulation.TARGET.getPosition().getY());
+
+        return (target.sumVector(this.position.mulScalar(-1)).normalize().mulScalar(UnitImpl.MAX_SPEED / 2)).sumVector(this.speed.mulScalar(-1));
     }
 
     /**

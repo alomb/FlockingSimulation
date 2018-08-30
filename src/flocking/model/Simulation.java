@@ -18,8 +18,13 @@ public class Simulation implements Model {
 
     private static final List<Unit> UNITS = new ArrayList<>();
     private static final List<Entity> OBSTACLES = new ArrayList<>();
-    private static final int OBSTACLES_NUMBER = 50;
-    private static final int ENTITIES_NUMBER = 500;
+    private static final int OBSTACLES_NUMBER = 0;
+    private static final int ENTITIES_NUMBER = 200;
+
+    /**
+     * The target of the {@link Unit}s.
+     */
+    public static final Target TARGET = new Target();
 
     /**
      * Initialize variables.
@@ -36,6 +41,7 @@ public class Simulation implements Model {
     @Override
     public final void update(final float elapsed) {
         Simulation.UNITS.forEach(e -> e.update(elapsed));
+        TARGET.update(elapsed);
     }
 
     @Override
@@ -43,6 +49,7 @@ public class Simulation implements Model {
         final List<Entity> entities = new ArrayList<>();
         entities.addAll(UNITS);
         entities.addAll(OBSTACLES);
+        entities.add(TARGET);
         return Collections.unmodifiableList(entities);
     }
 
@@ -78,8 +85,6 @@ public class Simulation implements Model {
      */
     public static List<Entity> getNeighbors(final Shape neighborsArea, final Unit unit) {
         return Simulation.UNITS.stream().filter(e -> {
-            //System.out.println(new Point((int) Math.round(e.getPosition().getX()),
-                    //((int) Math.round(e.getPosition().getY()))));
             return neighborsArea.contains(new Point((int) Math.round(e.getPosition().getX()),
                     ((int) Math.round(e.getPosition().getY())))) && !e.equals(unit);
         }).collect(Collectors.toList());
