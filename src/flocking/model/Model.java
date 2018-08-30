@@ -23,8 +23,8 @@ public interface Model {
     void recalculate();
 
     /**
-     * Creates a new {@link Entity}.
+     * @param command a string representing commands
      */
-    void createEntity();
+    void executeCommands(String command);
 
 }

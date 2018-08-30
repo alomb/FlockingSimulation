@@ -2,11 +2,16 @@ package flocking.view;
 
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.GridLayout;
 import java.awt.Toolkit;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
+import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JSplitPane;
 import javax.swing.SwingUtilities;
 
 import flocking.controller.Controller;
@@ -18,9 +23,12 @@ public class ViewImpl implements View {
 
     private final JFrame frame;
     private Scene scene;
+    private Scene textPanel;
+    private final JSplitPane splitPane;
 
     private final int width;
     private final int height;
+    private final int textHeight;
 
     /**
      * Initialize the frame and the window.
@@ -29,10 +37,15 @@ public class ViewImpl implements View {
 
         this.height = (int) Toolkit.getDefaultToolkit().getScreenSize().getHeight();
         this.width = (int) Toolkit.getDefaultToolkit().getScreenSize().getWidth();
+        this.textHeight = 75;
         this.frame = new JFrame("FlockMovement");
-        frame.setSize(this.width, this.height);
-        frame.setMinimumSize(new Dimension(this.width, this.height));
-        frame.setResizable(false);
+        this.frame.setSize(this.width, this.height);
+        this.frame.setMinimumSize(new Dimension(this.width, this.height));
+        this.frame.setResizable(false);
+        this.frame.getContentPane().setLayout(new GridLayout());
+
+        this.splitPane = new JSplitPane();
+        this.frame.getContentPane().add(this.splitPane);
     }
 
     @Override
@@ -46,21 +59,44 @@ public class ViewImpl implements View {
             }
         });
 
-        this.scene = new SceneImpl(this.width, this.height, controller);
-        frame.getContentPane().add((Component) this.scene);
-        this.scene.focus();
+        this.scene = new SimulationScene(this.width, this.height - this.textHeight, controller);
+        ((Component) this.scene).addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(final MouseEvent e) {
+                super.mouseReleased(e);
+                ViewImpl.this.scene.focus();
+            }
+        });
 
-        frame.pack();
-        frame.setVisible(true);
+        this.textPanel = new TextScene(this.width, this.textHeight, controller);
+        ((Component) this.textPanel).addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(final MouseEvent e) {
+                super.mouseReleased(e);
+                ViewImpl.this.textPanel.focus();
+            }
+        });
+
+        this.splitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
+        this.splitPane.setDividerLocation(this.height - this.textHeight);
+        this.splitPane.setTopComponent((Component) this.scene);
+        this.splitPane.setBottomComponent((Component) this.textPanel);
+        this.splitPane.setEnabled(false);
+
+        this.textPanel.focus();
+        this.frame.pack();
+        this.frame.setVisible(true);
+
     }
 
 
     @Override
     public final void render() {
-        if (this.scene != null) {
+        if (this.scene != null && this.textPanel != null) {
             try {
                 SwingUtilities.invokeAndWait(() -> {
                     this.scene.render();
+                    this.textPanel.render();
                 });
             } catch (Exception ex) {
                 ex.printStackTrace();

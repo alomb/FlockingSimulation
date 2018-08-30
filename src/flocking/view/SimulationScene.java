@@ -14,15 +14,14 @@ import java.util.List;
 import javax.swing.JPanel;
 
 import flocking.controller.Controller;
-import flocking.controller.input.CreateEntityCommand;
 import flocking.model.Entity;
 import flocking.model.Target;
 import flocking.model.UnitImpl;
 
 /**
- * A generic implementation of {@link Scene}.
+ * A generic implementation of {@link Scene} for the simulation.
  */
-public class SceneImpl extends JPanel implements Scene {
+public class SimulationScene extends JPanel implements Scene {
 
     private final Controller controller;
 
@@ -42,16 +41,16 @@ public class SceneImpl extends JPanel implements Scene {
      * @param h the panel height
      * @param controller the application {@link Controller}
      */
-    public SceneImpl(final int w, final int h, final Controller controller) {
+    public SimulationScene(final int w, final int h, final Controller controller) {
         super();
         this.controller = controller;
-        this.setSize(w, h);
+        this.setBounds(0, 0, w, h);
         this.setBackground(Color.BLACK);
+        this.addKeyListener(this);
     }
 
     @Override
     public final void focus() {
-        this.addKeyListener(this);
         setFocusable(true);
         setFocusTraversalKeysEnabled(false);
         requestFocusInWindow();
@@ -97,16 +96,14 @@ public class SceneImpl extends JPanel implements Scene {
     public final void keyTyped(final KeyEvent e) {
         if (e.getKeyChar() == 't') {
             this.toogleGizmos = !this.toogleGizmos;
+        } else if (e.getKeyChar() == 'p') {
+            this.controller.pause();
         }
     }
 
     @Override
     public final void keyPressed(final KeyEvent e) {
-        if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-            this.controller.notifyCommand(new CreateEntityCommand());
-        } else if (e.getKeyChar() == 'p') {
-            this.controller.pause();
-        }
+
     }
 
     @Override

@@ -11,15 +11,22 @@ import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import flocking.controller.Controller;
+
 /**
  * The simulation environment.
  */
 public class Simulation implements Model {
 
+    private final Controller controller;
+
     private static final List<Unit> UNITS = new ArrayList<>();
     private static final List<Entity> OBSTACLES = new ArrayList<>();
-    private static final int OBSTACLES_NUMBER = 0;
-    private static final int ENTITIES_NUMBER = 200;
+    private static final int OBSTACLES_NUMBER = 50;
+    private static final int ENTITIES_NUMBER = 500;
+
+    //commands
+    private boolean wander;
 
     /**
      * The target of the {@link Unit}s.
@@ -27,9 +34,10 @@ public class Simulation implements Model {
     public static final Target TARGET = new Target();
 
     /**
-     * Initialize variables.
+     * @param controller the application {@link Controller}
      */
-    public Simulation() {
+    public Simulation(final Controller controller) {
+        this.controller = controller;
         recalculate();
         this.setObstacles();
         //Random obstacles
@@ -41,7 +49,9 @@ public class Simulation implements Model {
     @Override
     public final void update(final float elapsed) {
         Simulation.UNITS.forEach(e -> e.update(elapsed));
-        TARGET.update(elapsed);
+        if (!this.wander) {
+            TARGET.update(elapsed);
+        }
     }
 
     @Override
@@ -49,7 +59,9 @@ public class Simulation implements Model {
         final List<Entity> entities = new ArrayList<>();
         entities.addAll(UNITS);
         entities.addAll(OBSTACLES);
-        entities.add(TARGET);
+        if (!this.wander) {
+            entities.add(TARGET);
+        }
         return Collections.unmodifiableList(entities);
     }
 
@@ -59,23 +71,21 @@ public class Simulation implements Model {
     }
 
     @Override
-    public final void createEntity() {
-        final int sideLength = 6;
-        final int speed = 6;
-        final Random rnd = new Random();
-
-        /*
-        Simulation.UNITS.add(new UnitImpl(new Vector2DImpl(0,
-                rnd.nextInt((int) Toolkit.getDefaultToolkit().getScreenSize().getHeight())),
-                sideLength,
-                new Vector2DImpl(10, 0)));
-        */
-        Simulation.UNITS.add(new UnitImpl(new Vector2DImpl(rnd.nextInt((int) Toolkit.getDefaultToolkit().getScreenSize().getWidth()),
-                rnd.nextInt((int) Toolkit.getDefaultToolkit().getScreenSize().getHeight())),
-                sideLength,
-                new Vector2DImpl(rnd.nextBoolean() ? speed : -speed,
-                        rnd.nextBoolean() ? speed : -speed)));
-
+    public final void executeCommands(final String command) {
+        switch (command) {
+        case "c" : 
+            this.createEntity();
+            break;
+        case "s" : 
+            this.controller.pause();
+            break;
+        case "w" : 
+            this.wander = !this.wander;
+            Simulation.UNITS.forEach(u -> u.toogleWander());
+            break;
+        default:
+            break;
+        }
     }
 
     /**
@@ -103,6 +113,25 @@ public class Simulation implements Model {
         }).collect(Collectors.toList());
     }
 
+    private void createEntity() {
+        final int sideLength = 6;
+        final int speed = 6;
+        final Random rnd = new Random();
+
+        /*
+        Simulation.UNITS.add(new UnitImpl(new Vector2DImpl(0,
+                rnd.nextInt((int) Toolkit.getDefaultToolkit().getScreenSize().getHeight())),
+                sideLength,
+                new Vector2DImpl(10, 0)));
+        */
+        Simulation.UNITS.add(new UnitImpl(new Vector2DImpl(rnd.nextInt((int) Toolkit.getDefaultToolkit().getScreenSize().getWidth()),
+                rnd.nextInt((int) Toolkit.getDefaultToolkit().getScreenSize().getHeight())),
+                sideLength,
+                new Vector2DImpl(rnd.nextBoolean() ? speed : -speed,
+                        rnd.nextBoolean() ? speed : -speed)));
+
+    }
+
     private void setObstacles() {
 
         final int y = (int) Math.round(Toolkit.getDefaultToolkit().getScreenSize().getHeight());
@@ -122,5 +151,4 @@ public class Simulation implements Model {
                 rnd.nextInt(y)), maxSize));
         });
     }
-
 }

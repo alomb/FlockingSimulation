@@ -23,7 +23,7 @@ public class ControllerImpl implements Controller {
      */
     public ControllerImpl(final View view) {
         this.engine = new Engine();
-        this.model = new Simulation();
+        this.model = new Simulation(this);
         this.view = view;
     }
 
@@ -46,7 +46,7 @@ public class ControllerImpl implements Controller {
 
     @Override
     public final void pause() {
-        if (this.paused) {
+        if (!this.paused) {
             this.engine.resume();
         } else {
             this.engine.pause();

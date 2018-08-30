@@ -36,7 +36,7 @@ public class Engine implements Loop {
         this.scene = scene;
 
         this.running = true;
-        this.stopped = false;
+        this.stopped = true;
     }
 
     /**

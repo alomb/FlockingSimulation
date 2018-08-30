@@ -11,7 +11,7 @@ import java.util.Random;
  */
 public class Target implements Entity {
 
-    private static final int MAX_TIMER = 3000;
+    private static final int MAX_TIMER = 5000;
     private int currentTimer;
 
     private Vector2D position;

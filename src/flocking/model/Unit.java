@@ -21,4 +21,9 @@ public interface Unit extends Entity {
      * @return the entity's rotation angle
      */
     double getAngle();
+
+    /**
+     * Set wander or target mode.
+     */
+    void toogleWander();
 }

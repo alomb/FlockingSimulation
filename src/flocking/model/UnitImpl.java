@@ -38,12 +38,15 @@ public class UnitImpl implements Unit {
     private static final double MAX_SIGHT = 15;
     private static final double MAX_AVOIDANCE = 200;
 
-    private static final double MAX_COHESION = 100;
+    private static final double MAX_COHESION = 60;
     private static final double MIN_COHESION_DISTANCE = 10;
 
     private final int sideLength;
     private final List<Vector2D> figure;
     private final double mass;
+
+    //Behaviour
+    private boolean isWander;
 
     /**
      * @param startPos the first {@link Unit}'s {@link Point}
@@ -96,12 +99,15 @@ public class UnitImpl implements Unit {
         if (this.timer <= 0) {
             Vector2D result = new Vector2DImpl(0, 0);
             //Sum all steering forces
-            //result = result.sumVector(this.wander());
-            result = result.sumVector(this.seek());
+            if (this.isWander) {
+                result = result.sumVector(this.wander());
+            } else {
+                result = result.sumVector(this.seek());
+            }
 
             result = result.sumVector(this.obstacleAvoidance());
-            //result = result.sumVector(this.cohesion());
-            //result = result.sumVector(this.align());
+            result = result.sumVector(this.cohesion());
+            result = result.sumVector(this.align());
             result = result.sumVector(this.separate());
 
             result = result.clampMagnitude(UnitImpl.MAX_FORCE);
@@ -159,6 +165,11 @@ public class UnitImpl implements Unit {
         return new Vector2DImpl(this.speed);
     }
 
+    @Override
+    public final void toogleWander() {
+        this.isWander = !this.isWander;
+    }
+
     /**
      * @return the wander steering forces
      */
@@ -184,7 +195,7 @@ public class UnitImpl implements Unit {
         final Vector2D target = new Vector2DImpl(Simulation.TARGET.getPosition().getX(), 
                 Simulation.TARGET.getPosition().getY());
 
-        return (target.sumVector(this.position.mulScalar(-1)).normalize().mulScalar(UnitImpl.MAX_SPEED / 2)).sumVector(this.speed.mulScalar(-1));
+        return (target.sumVector(this.position.mulScalar(-1)).normalize().mulScalar(UnitImpl.MAX_SPEED * 1f / 4f)).sumVector(this.speed.mulScalar(-1));
     }
 
     /**
@@ -195,14 +206,6 @@ public class UnitImpl implements Unit {
         if (obstacles.isEmpty()) {
             return new Vector2DImpl(0, 0);
         }
-
-        /*
-        final Optional<Entity> obstacle = obstacles.stream().min((o1, o2) -> {
-            return o1.getPosition().sumVector(this.position.mulScalar(-1)).length() > o2.getPosition().sumVector(this.position.mulScalar(-1)).length()
-            ? 1 : o1.getPosition().sumVector(this.position.mulScalar(-1)).length() == o2.getPosition().sumVector(this.position.mulScalar(-1)).length()
-                    ? 0 : -1;
-        });
-        */
 
         final Optional<Entity> obstacle = obstacles.stream().min((o1, o2) -> {
             return o1.getPosition().distance(this.position) > o2.getPosition().distance(this.position) 
@@ -216,7 +219,7 @@ public class UnitImpl implements Unit {
 
         final Vector2D sight = this.speed.normalize().mulScalar(UnitImpl.MAX_SIGHT).sumVector(this.position);
         final Vector2D avoidanceForce = sight.sumVector(obstacle.get().getPosition().mulScalar(-1));
-        return avoidanceForce.normalize().mulScalar(UnitImpl.MAX_AVOIDANCE);
+        return avoidanceForce.normalize().mulScalar(MAX_AVOIDANCE);
     }
 
     /**
