@@ -1,7 +1,6 @@
 package flocking.model;
 
 import java.awt.Rectangle;
-import java.awt.Toolkit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -67,8 +66,8 @@ public class Target implements Entity {
 
     private void getRandomPosition() {
         final Random rnd = new Random();
-        this.position = new Vector2DImpl(rnd.nextInt((int) Toolkit.getDefaultToolkit().getScreenSize().getWidth()),
-                rnd.nextInt((int) Toolkit.getDefaultToolkit().getScreenSize().getHeight() - ViewImpl.TEXT_HEIGHT));
+        this.position = new Vector2DImpl(rnd.nextInt(ViewImpl.WIDTH),
+                rnd.nextInt(ViewImpl.HEIGHT - ViewImpl.TEXT_HEIGHT));
     }
 
 }

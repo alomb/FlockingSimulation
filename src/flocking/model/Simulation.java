@@ -143,8 +143,8 @@ public class Simulation implements Model {
 
     private void setObstacles() {
 
-        final int y = (int) Math.round(Toolkit.getDefaultToolkit().getScreenSize().getHeight() - ViewImpl.TEXT_HEIGHT / 2);
-        final int x = (int) Math.round(Toolkit.getDefaultToolkit().getScreenSize().getWidth());
+        final int y = ViewImpl.HEIGHT - ViewImpl.TEXT_HEIGHT / 2;
+        final int x = ViewImpl.WIDTH;
         final int maxSize = 30;
 
         //Boundary obstacles

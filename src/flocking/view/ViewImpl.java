@@ -25,23 +25,20 @@ public class ViewImpl implements View {
     private Scene textPanel;
     private final JSplitPane splitPane;
 
-    private final int width;
-    private final int height;
+    public static final int WIDTH = (int) (Toolkit.getDefaultToolkit().getScreenSize().getWidth() - Toolkit.getDefaultToolkit().getScreenSize().getWidth() / 10);
+    public static final int HEIGHT = (int) (Toolkit.getDefaultToolkit().getScreenSize().getHeight() - Toolkit.getDefaultToolkit().getScreenSize().getHeight() / 10);
     /**
-     * The text panel y position choordinate.
+     * The text panel y position coordinate.
      */
-    public static final int TEXT_HEIGHT = 75;
+    public static final int TEXT_HEIGHT = ViewImpl.HEIGHT / 10;
 
     /**
      * Initialize the frame and the window.
      */
     public ViewImpl() {
-
-        this.height = (int) Toolkit.getDefaultToolkit().getScreenSize().getHeight();
-        this.width = (int) Toolkit.getDefaultToolkit().getScreenSize().getWidth();
         this.frame = new JFrame("FlockMovement");
-        this.frame.setSize(this.width, this.height);
-        this.frame.setMinimumSize(new Dimension(this.width, this.height));
+        this.frame.setSize(ViewImpl.WIDTH, ViewImpl.HEIGHT);
+        this.frame.setMinimumSize(new Dimension(ViewImpl.WIDTH, ViewImpl.HEIGHT));
         this.frame.setResizable(false);
         this.frame.getContentPane().setLayout(new GridLayout());
 
@@ -60,7 +57,7 @@ public class ViewImpl implements View {
             }
         });
 
-        this.scene = new SimulationScene(this.width, this.height - ViewImpl.TEXT_HEIGHT, controller);
+        this.scene = new SimulationScene(ViewImpl.WIDTH, ViewImpl.HEIGHT - ViewImpl.TEXT_HEIGHT, controller);
         ((Component) this.scene).addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(final MouseEvent e) {
@@ -69,7 +66,7 @@ public class ViewImpl implements View {
             }
         });
 
-        this.textPanel = new TextScene(this.width, ViewImpl.TEXT_HEIGHT, controller);
+        this.textPanel = new TextScene(ViewImpl.WIDTH, ViewImpl.TEXT_HEIGHT, controller);
         ((Component) this.textPanel).addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(final MouseEvent e) {
@@ -79,7 +76,7 @@ public class ViewImpl implements View {
         });
 
         this.splitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
-        this.splitPane.setDividerLocation(this.height - ViewImpl.TEXT_HEIGHT);
+        this.splitPane.setDividerLocation(ViewImpl.HEIGHT - ViewImpl.TEXT_HEIGHT);
         this.splitPane.setTopComponent((Component) this.scene);
         this.splitPane.setBottomComponent((Component) this.textPanel);
         this.splitPane.setEnabled(false);
