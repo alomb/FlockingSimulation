@@ -45,6 +45,11 @@ public class ControllerImpl implements Controller {
     }
 
     @Override
+    public final String getCommandFeedback() {
+        return this.model.getCommandFeedback();
+    }
+
+    @Override
     public final void pause() {
         if (!this.paused) {
             this.engine.resume();

@@ -21,6 +21,7 @@ public class TextScene extends JPanel implements Scene {
      */
     private static final long serialVersionUID = -5995731189455386061L;
     private String commands = "p";
+    private static final int MAX_LENGTH = 5;
 
     private final Controller controller;
 
@@ -46,7 +47,7 @@ public class TextScene extends JPanel implements Scene {
 
     @Override
     public final void keyTyped(final KeyEvent e) {
-        if (Character.isLetter(e.getKeyChar()) || Character.isDigit(e.getKeyChar())) {
+        if ((this.commands.length() < TextScene.MAX_LENGTH) && (Character.isLetter(e.getKeyChar()) || Character.isDigit(e.getKeyChar()))) {
             this.commands = this.commands + e.getKeyChar();
         }
     }
@@ -83,7 +84,13 @@ public class TextScene extends JPanel implements Scene {
 
     @Override
     public final void draw(final Graphics2D g) {
+        final String commandString = ">>   " + this.commands;
         g.setColor(Color.WHITE);
-        g.drawString(">>   " + this.commands, 0, 10 * 2);
+        g.getFontMetrics().getHeight();
+        g.drawString(commandString, 0, g.getFontMetrics().getHeight());
+        if (this.controller.getCommandFeedback().length() != 0) {
+            g.setColor(Color.GREEN);
+            g.drawString("( " + this.controller.getCommandFeedback() + " )", g.getFontMetrics().stringWidth(commandString) * 2, g.getFontMetrics().getHeight());
+        }
     }
 }

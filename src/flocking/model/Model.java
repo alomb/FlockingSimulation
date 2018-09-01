@@ -22,4 +22,9 @@ public interface Model {
      */
     void executeCommands(String command);
 
+    /**
+     * @return a {@link String} containing a command relative feedback message
+     */
+    String getCommandFeedback();
+
 }

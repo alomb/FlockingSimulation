@@ -26,7 +26,12 @@ public interface Controller {
     List<Entity> getFigures();
 
     /**
-     * Pause the simualtion.
+     * Pause the simulation.
      */
     void pause();
+
+    /**
+     * @return the {@link Model} homonym method
+     */
+    String getCommandFeedback();
 }

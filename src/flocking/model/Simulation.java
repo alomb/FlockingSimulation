@@ -23,6 +23,9 @@ public class Simulation implements Model {
     private static final List<Unit> UNITS = new ArrayList<>();
     private static final List<Entity> OBSTACLES = new ArrayList<>();
 
+    private String commandFeedback = "";
+    private int timerFeedback;
+
     //commands
     private boolean wander;
 
@@ -45,6 +48,15 @@ public class Simulation implements Model {
         Simulation.UNITS.forEach(e -> e.update(elapsed));
         if (!this.wander) {
             TARGET.update(elapsed);
+        }
+
+        if (this.timerFeedback > 0) {
+            this.timerFeedback -= elapsed;
+        } 
+
+        if (this.commandFeedback.length() > 0 && this.timerFeedback <= 0) {
+            this.timerFeedback = 0;
+            this.commandFeedback = "";
         }
     }
 
@@ -76,32 +88,51 @@ public class Simulation implements Model {
         if (filteredCommand.length() > 0) {
             switch (filteredCommand.charAt(0)) {
             case 'c' : 
-                if (filteredCommand.length() > 1 && filteredCommand.charAt(1) == 'e') {
+                if (filteredCommand.length() == 2 && filteredCommand.charAt(1) == 'e') {
                     //Creates entities
                     for (int r = 0; r < repeat; r++) {
                         this.createEntity();
                     }
-                } else if (filteredCommand.length() > 1 && filteredCommand.charAt(1) == 'o') {
+                    this.commandFeedback = "CREATED " + repeat + " ENTITIES";
+                } else if (filteredCommand.length() == 2 && filteredCommand.charAt(1) == 'o') {
                     //Creates obstacles
                     for (int r = 0; r < repeat; r++) {
                         this.createObstacle();
                     }
+                    this.commandFeedback = "CREATED " + repeat + " OBSTACLES";
                 }
                 break;
             case 'p' : 
-                this.controller.pause();
+                if (filteredCommand.length() == 1) {
+                    this.controller.pause();
+                    this.commandFeedback = "PAUSE-RESUME";
+                }
                 break;
             case 'r' : 
-                this.reset();
+                if (filteredCommand.length() == 1) {
+                    this.reset();
+                    this.commandFeedback = "RESET";
+                }
                 break;
             case 'w' : 
-                this.wander = !this.wander;
-                Simulation.UNITS.forEach(u -> u.toogleWander());
+                if (filteredCommand.length() == 1) {
+                    this.wander = !this.wander;
+                    Simulation.UNITS.forEach(u -> u.toogleWander());
+                    this.commandFeedback = "WANDER " + (this.wander ? "ENABLED" : "DISABLED");
+                }
                 break;
             default:
+                this.commandFeedback = "COMMAND NOT FOUND";
                 break;
             }
+
+            this.timerFeedback = 1000;
         }
+    }
+
+    @Override
+    public final String getCommandFeedback() {
+        return this.commandFeedback;
     }
 
     /**
