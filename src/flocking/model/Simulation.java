@@ -23,7 +23,7 @@ public class Simulation implements Model {
 
     private static final List<Unit> UNITS = new ArrayList<>();
     private static final List<Entity> OBSTACLES = new ArrayList<>();
-    private static final int OBSTACLES_NUMBER = 50;
+    private static final int OBSTACLES_NUMBER = 20;
     private static final int ENTITIES_NUMBER = 500;
 
     //commands
@@ -143,21 +143,15 @@ public class Simulation implements Model {
 
     private void setObstacles() {
 
-        final int y = ViewImpl.HEIGHT - ViewImpl.TEXT_HEIGHT / 2;
-        final int x = ViewImpl.WIDTH;
+        final int y = ViewImpl.HEIGHT - (ViewImpl.TEXT_HEIGHT) - (ViewImpl.HEIGHT / 4);
+        final int x = ViewImpl.WIDTH - ViewImpl.WIDTH / 5;
         final int maxSize = 30;
-
-        //Boundary obstacles
-        Simulation.OBSTACLES.add(new Obstacle(new Vector2DImpl(0, y / 2), maxSize, y));
-        Simulation.OBSTACLES.add(new Obstacle(new Vector2DImpl(x / 2, 0), x, maxSize));
-        Simulation.OBSTACLES.add(new Obstacle(new Vector2DImpl(x / 2, y - maxSize), x, maxSize));
-        Simulation.OBSTACLES.add(new Obstacle(new Vector2DImpl(x, y / 2), maxSize, y));
 
         //Random obstacles
         IntStream.range(0, Simulation.OBSTACLES_NUMBER).forEach(i -> {
             final Random rnd = new Random();
-            Simulation.OBSTACLES.add(new Obstacle(new Vector2DImpl(rnd.nextInt(x),
-                rnd.nextInt(y)), maxSize));
+            Simulation.OBSTACLES.add(new Obstacle(new Vector2DImpl(rnd.nextInt(x) + ViewImpl.WIDTH / 10,
+                rnd.nextInt(y) + ViewImpl.HEIGHT / 8), maxSize));
         });
     }
 }

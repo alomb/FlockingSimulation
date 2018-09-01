@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
+import flocking.view.ViewImpl;
+
 /**
  * An implementation of {@link Entity}.
  */
@@ -125,6 +127,8 @@ public class UnitImpl implements Unit {
             }
 
             this.position = this.position.sumVector(finalSpeed);
+            this.adjustPosition();
+
             this.speed = this.speed.setAngle(angle);
 
             this.timer = UnitImpl.MAX_TIMER;
@@ -170,6 +174,24 @@ public class UnitImpl implements Unit {
     @Override
     public final void toogleWander() {
         this.isWander = !this.isWander;
+    }
+
+    /**
+     * 
+     */
+    private void adjustPosition() {
+        if (this.position.getX() < 0) {
+            this.position.setX(ViewImpl.WIDTH);
+        }
+        if (this.position.getX() > ViewImpl.WIDTH) {
+            this.position.setX(0);
+        }
+        if (this.position.getY() < 0) {
+            this.position.setY(ViewImpl.HEIGHT - ViewImpl.TEXT_HEIGHT);
+        }
+        if (this.position.getY() > ViewImpl.HEIGHT - ViewImpl.TEXT_HEIGHT) {
+            this.position.setY(0);
+        }
     }
 
     /**

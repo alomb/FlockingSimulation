@@ -25,10 +25,18 @@ public class ViewImpl implements View {
     private Scene textPanel;
     private final JSplitPane splitPane;
 
-    public static final int WIDTH = (int) (Toolkit.getDefaultToolkit().getScreenSize().getWidth() - Toolkit.getDefaultToolkit().getScreenSize().getWidth() / 10);
-    public static final int HEIGHT = (int) (Toolkit.getDefaultToolkit().getScreenSize().getHeight() - Toolkit.getDefaultToolkit().getScreenSize().getHeight() / 10);
     /**
-     * The text panel y position coordinate.
+     * The window width.
+     */
+    public static final int WIDTH = (int) (Toolkit.getDefaultToolkit().getScreenSize().getWidth() - Toolkit.getDefaultToolkit().getScreenSize().getWidth() / 10);
+
+    /**
+     * The window height.
+     */
+    public static final int HEIGHT = (int) (Toolkit.getDefaultToolkit().getScreenSize().getHeight() - Toolkit.getDefaultToolkit().getScreenSize().getHeight() / 10);
+
+    /**
+     * The text panel height.
      */
     public static final int TEXT_HEIGHT = ViewImpl.HEIGHT / 10;
 
