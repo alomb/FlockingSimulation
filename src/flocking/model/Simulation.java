@@ -182,12 +182,17 @@ public class Simulation implements Model {
                 sideLength,
                 new Vector2DImpl(10, 0)));
         */
-        Simulation.UNITS.add(new UnitImpl(new Vector2DImpl(rnd.nextInt((int) Toolkit.getDefaultToolkit().getScreenSize().getWidth()),
-                rnd.nextInt((int) Toolkit.getDefaultToolkit().getScreenSize().getHeight() - ViewImpl.TEXT_HEIGHT / 2)),
-                sideLength,
-                new Vector2DImpl(rnd.nextBoolean() ? speed : -speed,
-                        rnd.nextBoolean() ? speed : -speed)));
 
+        Simulation.UNITS.add(
+                new UnitSeparation(
+                    new UnitAlignment(
+                            new UnitCohesion(
+                                    new UnitCollisionAvoidance(
+                                            new UnitBase(new Vector2DImpl(rnd.nextInt((int) Toolkit.getDefaultToolkit().getScreenSize().getWidth()),
+                                                    rnd.nextInt((int) Toolkit.getDefaultToolkit().getScreenSize().getHeight() - ViewImpl.TEXT_HEIGHT / 2)),
+                                                    sideLength,
+                                                    new Vector2DImpl(rnd.nextBoolean() ? speed : -speed,
+                                                            rnd.nextBoolean() ? speed : -speed)))))));
     }
 
     /**

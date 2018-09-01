@@ -8,6 +8,11 @@ import java.awt.Shape;
 public interface Unit extends Entity {
 
     /**
+     * @return the figure side length
+     */
+    int getSideLength();
+
+    /**
      * @return a {@link Shape} of the cohesion influence area
      */
     Shape getCohesionArea();
@@ -26,4 +31,10 @@ public interface Unit extends Entity {
      * Set wander or target mode.
      */
     void toogleWander();
+
+    /**
+     * @return the calculated steering force to move the unit
+     */
+    Vector2D getSteeringForce();
+
 }

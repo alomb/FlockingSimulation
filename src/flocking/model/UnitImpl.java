@@ -1,6 +1,5 @@
 package flocking.model;
 
-
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Shape;
@@ -11,48 +10,47 @@ import java.awt.geom.Path2D;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
-import java.util.Random;
 
 import flocking.view.ViewImpl;
 
 /**
- * An implementation of {@link Entity}.
+ * A basic implementation of {@link Entity}.
  */
-public class UnitImpl implements Unit {
+public abstract class UnitImpl implements Unit {
 
+    //Physics variables
     private Vector2D position;
     private double angle;
     private Vector2D speed;
+    private final double mass;
 
+    //Updating variables
     private int timer;
     private static final int MAX_TIMER = 400;
 
+    //Rotation variables
     //150 , -295 :: 30 , -330 :: 90 , -270 :: 0 , -360
     private static final double MIN_ANGLE = 150;
     private static final double MAX_ANGLE = -295;
-    private static final int DELTA_ANGLE = 20;
 
+    //Unit view sizes
     private static final int AREA = 15;
+    private static final double MAX_SIGHT = 15;
+
+    //Max values
     private static final double MAX_FORCE = 200;
     private static final double MAX_SPEED = 200;
 
-    private static final double MAX_SIGHT = 15;
-    private static final double MAX_AVOIDANCE = 200;
-
-    private static final double MAX_COHESION = 60;
-    private static final double MIN_COHESION_DISTANCE = 10;
-
+    //Figure sizes and positions
     private final int sideLength;
     private final List<Vector2D> figure;
-    private final double mass;
 
     //Behaviour
     private boolean isWander;
 
     /**
      * @param startPos the first {@link Unit}'s {@link Point}
-     * @param sideLength the {@link Unit} length
+     * @param sideLength the {@link Unit} side length
      * @param speed the {@link Unit} speed
      */
     public UnitImpl(final Vector2D startPos, final int sideLength, final Vector2D speed) {
@@ -79,6 +77,11 @@ public class UnitImpl implements Unit {
     }
 
     @Override
+    public final int getSideLength() {
+        return this.sideLength;
+    }
+
+    @Override
     public final void setFigure(final List<Vector2D> figure) {
         Collections.copy(this.figure, figure);
     }
@@ -89,31 +92,19 @@ public class UnitImpl implements Unit {
     }
 
     @Override
-    public final double getAngle() {
-        return this.angle;
-    }
-
-    @Override
     public final void setPosition(final Vector2D position) {
         this.position = new Vector2DImpl(position);
     }
 
     @Override
+    public final double getAngle() {
+        return this.angle;
+    }
+
+    @Override
     public final void update(final float elapsed) {
         if (this.timer <= 0) {
-            Vector2D result = new Vector2DImpl(0, 0);
-            //Sum all steering forces
-            if (this.isWander) {
-                result = result.sumVector(this.wander());
-            } else {
-                result = result.sumVector(this.seek());
-            }
-
-            result = result.sumVector(this.obstacleAvoidance());
-            result = result.sumVector(this.cohesion());
-            result = result.sumVector(this.align());
-            result = result.sumVector(this.separate());
-
+            Vector2D result = this.getSteeringForce();
             result = result.clampMagnitude(UnitImpl.MAX_FORCE);
             result = result.mulScalar(1 / this.mass);
 
@@ -136,6 +127,9 @@ public class UnitImpl implements Unit {
             this.timer -= elapsed;
         }
     }
+
+    @Override
+    public abstract Vector2D getSteeringForce();
 
     @Override
     public final Rectangle getArea(final double growFactor) {
@@ -177,7 +171,7 @@ public class UnitImpl implements Unit {
     }
 
     /**
-     * 
+     * Adjust the position to link opposite window sides.
      */
     private void adjustPosition() {
         if (this.position.getX() < 0) {
@@ -195,58 +189,6 @@ public class UnitImpl implements Unit {
     }
 
     /**
-     * @return the wander steering forces
-     */
-    private Vector2D wander() {
-        final Random rnd = new Random();
-        double deltaAngle = rnd.nextInt(UnitImpl.DELTA_ANGLE);
-        if (rnd.nextBoolean()) {
-            deltaAngle = -rnd.nextInt(UnitImpl.DELTA_ANGLE);
-        }
-
-        Vector2D center = new Vector2DImpl(this.speed);
-        center = center.normalize().mulScalar(this.sideLength * 2);
-
-        center = center.rotate(deltaAngle);
-
-        return center;
-    }
-
-    /**
-     * @return the seek steering forces
-     */
-    private Vector2D seek() {
-        final Vector2D target = new Vector2DImpl(Simulation.TARGET.getPosition().getX(), 
-                Simulation.TARGET.getPosition().getY());
-
-        return (target.sumVector(this.position.mulScalar(-1)).normalize().mulScalar(UnitImpl.MAX_SPEED * 1f / 4f)).sumVector(this.speed.mulScalar(-1));
-    }
-
-    /**
-     * @return the collision avoidance steering force
-     */
-    private Vector2D obstacleAvoidance() {
-        final List<Entity> obstacles = Simulation.getObstacleInPath(this.getLine(), this);
-        if (obstacles.isEmpty()) {
-            return new Vector2DImpl(0, 0);
-        }
-
-        final Optional<Entity> obstacle = obstacles.stream().min((o1, o2) -> {
-            return o1.getPosition().distance(this.position) > o2.getPosition().distance(this.position) 
-                    ? 1 : o1.getPosition().distance(this.position) == o2.getPosition().distance(this.position) 
-                    ? 0 : -1;
-        });
-
-        if (!obstacle.isPresent()) {
-            return new Vector2DImpl(0, 0);
-        }
-
-        final Vector2D sight = this.speed.normalize().mulScalar(UnitImpl.MAX_SIGHT).sumVector(this.position);
-        final Vector2D avoidanceForce = sight.sumVector(obstacle.get().getPosition().mulScalar(-1));
-        return avoidanceForce.normalize().mulScalar(MAX_AVOIDANCE);
-    }
-
-    /**
      * @return a {@link Line2D} representing the sight
      */
     public Line2D.Double getLine() {
@@ -254,78 +196,5 @@ public class UnitImpl implements Unit {
         return new Line2D.Double(new Point((int) Math.round(this.position.getX()), (int) Math.round(this.position.getY())),
                 new Point((int) Math.round(sight.getX()), (int) Math.round(sight.getY())));
 
-    }
-
-    /**
-     * @return the cohesion rule steering force
-     */
-    private Vector2D cohesion() {
-        final List<Entity> neighbors = Simulation.getNeighbors(this.getCohesionArea(), this);
-        if (neighbors.isEmpty()) {
-            return new Vector2DImpl(0, 0);
-        }
-
-        double counter = 0;
-        Vector2D centroid = new Vector2DImpl(0, 0);
-        for (final Entity n : neighbors) {
-            if (n.getPosition().distance(this.getPosition()) > UnitImpl.MIN_COHESION_DISTANCE) {
-                centroid = centroid.sumVector(n.getPosition());
-                counter++;
-            }
-        }
-
-        if (counter != 0) {
-            centroid = centroid.mulScalar(1 / counter);
-            final Vector2D cohesionForce = centroid.sumVector(this.position.mulScalar(-1));
-            return cohesionForce.normalize().mulScalar(UnitImpl.MAX_COHESION);
-        }
-
-        return new Vector2DImpl(0, 0);
-    }
-
-    /**
-     * @return the alignment rule steering force
-     */
-    private Vector2D align() {
-        final List<Entity> neighbors = Simulation.getNeighbors(this.getCohesionArea(), this);
-        if (neighbors.isEmpty()) {
-            return new Vector2DImpl(0, 0);
-        }
-
-        double counter = 0;
-        Vector2D averageSpeed = new Vector2DImpl(0, 0);
-        for (final Entity n : neighbors) {
-            if (n.getPosition().distance(this.getPosition()) > UnitImpl.MIN_COHESION_DISTANCE) {
-                averageSpeed = averageSpeed.sumVector(n.getPosition());
-                counter++;
-            }
-        }
-
-        if (counter != 0) {
-            averageSpeed = averageSpeed.mulScalar(1 / counter);
-            final Vector2D cohesionForce = averageSpeed.sumVector(this.speed.mulScalar(-1));
-            return cohesionForce.normalize().mulScalar(1f / 2f);
-        }
-
-        return new Vector2DImpl(0, 0);
-    }
-
-    /**
-     * @return the separation rule steering force
-     */
-    private Vector2D separate() {
-        final List<Entity> neighbors = Simulation.getNeighbors(this.getCohesionArea(), this);
-        if (neighbors.isEmpty()) {
-            return new Vector2DImpl(0, 0);
-        }
-
-        Vector2D separationForce = new Vector2DImpl(0, 0);
-        for (final Entity n : neighbors) {
-            if (n.getPosition().distance(this.getPosition()) < UnitImpl.MIN_COHESION_DISTANCE) {
-                separationForce = separationForce.sumVector((n.getPosition().sumVector(this.getPosition().mulScalar(-1))).mulScalar(-1));
-            }
-        }
-
-        return separationForce.mulScalar(MAX_COHESION * 2f / 3f);
     }
 }
