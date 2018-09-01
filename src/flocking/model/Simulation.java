@@ -9,7 +9,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import flocking.controller.Controller;
 import flocking.view.ViewImpl;
@@ -23,8 +22,6 @@ public class Simulation implements Model {
 
     private static final List<Unit> UNITS = new ArrayList<>();
     private static final List<Entity> OBSTACLES = new ArrayList<>();
-    private static final int OBSTACLES_NUMBER = 20;
-    private static final int ENTITIES_NUMBER = 500;
 
     //commands
     private boolean wander;
@@ -40,7 +37,7 @@ public class Simulation implements Model {
     public Simulation(final Controller controller) {
         this.controller = controller;
         this.wander = true;
-        this.clean();
+        this.reset();
     }
 
     @Override
@@ -64,18 +61,39 @@ public class Simulation implements Model {
 
     @Override
     public final void executeCommands(final String command) {
-        switch (command) {
-        case "c" : 
-            this.createEntity();
+        int repeat = 0, i = 0;
+        String filteredCommand = String.copyValueOf(command.toCharArray());
+        while (command.length() > i && Character.isDigit(command.charAt(i))) {
+            i++;
+        }
+
+        if (i > 0) {
+            repeat = Integer.parseInt(command.substring(0, i));
+        }
+
+        filteredCommand = command.substring(i);
+
+        switch (filteredCommand.charAt(0)) {
+        case 'c' : 
+            if (filteredCommand.charAt(1) == 'e') {
+                //Creates entities
+                for (int r = 0; r < repeat; r++) {
+                    this.createEntity();
+                }
+            } else if (filteredCommand.charAt(1) == 'o') {
+                //Creates obstacles
+                for (int r = 0; r < repeat; r++) {
+                    this.createObstacle();
+                }
+            }
             break;
-        case "p" : 
+        case 'p' : 
             this.controller.pause();
             break;
-        case "r" : 
-            this.clean();
-            this.recalculate();
+        case 'r' : 
+            this.reset();
             break;
-        case "w" : 
+        case 'w' : 
             this.wander = !this.wander;
             Simulation.UNITS.forEach(u -> u.toogleWander());
             break;
@@ -109,19 +127,17 @@ public class Simulation implements Model {
         }).collect(Collectors.toList());
     }
 
-    private void recalculate() {
-        this.setObstacles();
-        //Random obstacles
-        IntStream.range(0, Simulation.ENTITIES_NUMBER).forEach(i -> {
-            this.createEntity();
-        });
-    }
-
-    private void clean() {
+    /**
+     * Clean the scene, deleting all obstacles and units.
+     */
+    private void reset() {
         Simulation.UNITS.clear();
         Simulation.OBSTACLES.clear();
     }
 
+    /**
+     * Create an entity.
+     */
     private void createEntity() {
         final int sideLength = 6;
         final int speed = 6;
@@ -141,17 +157,17 @@ public class Simulation implements Model {
 
     }
 
-    private void setObstacles() {
+    /**
+     * Create an obstacle.
+     */
+    private void createObstacle() {
 
         final int y = ViewImpl.HEIGHT - (ViewImpl.TEXT_HEIGHT) - (ViewImpl.HEIGHT / 4);
         final int x = ViewImpl.WIDTH - ViewImpl.WIDTH / 5;
         final int maxSize = 30;
 
-        //Random obstacles
-        IntStream.range(0, Simulation.OBSTACLES_NUMBER).forEach(i -> {
-            final Random rnd = new Random();
-            Simulation.OBSTACLES.add(new Obstacle(new Vector2DImpl(rnd.nextInt(x) + ViewImpl.WIDTH / 10,
-                rnd.nextInt(y) + ViewImpl.HEIGHT / 8), maxSize));
-        });
+        final Random rnd = new Random();
+        Simulation.OBSTACLES.add(new Obstacle(new Vector2DImpl(rnd.nextInt(x) + ViewImpl.WIDTH / 10,
+            rnd.nextInt(y) + ViewImpl.HEIGHT / 8), maxSize));
     }
 }
