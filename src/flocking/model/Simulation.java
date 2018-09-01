@@ -73,32 +73,34 @@ public class Simulation implements Model {
 
         filteredCommand = command.substring(i);
 
-        switch (filteredCommand.charAt(0)) {
-        case 'c' : 
-            if (filteredCommand.charAt(1) == 'e') {
-                //Creates entities
-                for (int r = 0; r < repeat; r++) {
-                    this.createEntity();
+        if (filteredCommand.length() > 0) {
+            switch (filteredCommand.charAt(0)) {
+            case 'c' : 
+                if (filteredCommand.length() > 1 && filteredCommand.charAt(1) == 'e') {
+                    //Creates entities
+                    for (int r = 0; r < repeat; r++) {
+                        this.createEntity();
+                    }
+                } else if (filteredCommand.length() > 1 && filteredCommand.charAt(1) == 'o') {
+                    //Creates obstacles
+                    for (int r = 0; r < repeat; r++) {
+                        this.createObstacle();
+                    }
                 }
-            } else if (filteredCommand.charAt(1) == 'o') {
-                //Creates obstacles
-                for (int r = 0; r < repeat; r++) {
-                    this.createObstacle();
-                }
+                break;
+            case 'p' : 
+                this.controller.pause();
+                break;
+            case 'r' : 
+                this.reset();
+                break;
+            case 'w' : 
+                this.wander = !this.wander;
+                Simulation.UNITS.forEach(u -> u.toogleWander());
+                break;
+            default:
+                break;
             }
-            break;
-        case 'p' : 
-            this.controller.pause();
-            break;
-        case 'r' : 
-            this.reset();
-            break;
-        case 'w' : 
-            this.wander = !this.wander;
-            Simulation.UNITS.forEach(u -> u.toogleWander());
-            break;
-        default:
-            break;
         }
     }
 
