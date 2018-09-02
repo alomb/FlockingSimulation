@@ -39,7 +39,7 @@ public class Simulation implements Model {
      */
     public Simulation(final Controller controller) {
         this.controller = controller;
-        this.wander = true;
+        this.wander = false;
         this.reset();
     }
 
@@ -184,11 +184,11 @@ public class Simulation implements Model {
         */
 
         Simulation.UNITS.add(
-                new UnitSeparation(
-                    new UnitAlignment(
-                            new UnitCohesion(
+                new UnitAlignment(
+                        new UnitSeparation(
+                                new UnitCohesion(
                                     new UnitCollisionAvoidance(
-                                            new UnitBase(new Vector2DImpl(rnd.nextInt((int) Toolkit.getDefaultToolkit().getScreenSize().getWidth()),
+                                            new UnitSeek(new Vector2DImpl(rnd.nextInt((int) Toolkit.getDefaultToolkit().getScreenSize().getWidth()),
                                                     rnd.nextInt((int) Toolkit.getDefaultToolkit().getScreenSize().getHeight() - ViewImpl.TEXT_HEIGHT / 2)),
                                                     sideLength,
                                                     new Vector2DImpl(rnd.nextBoolean() ? speed : -speed,

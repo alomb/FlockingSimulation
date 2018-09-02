@@ -25,21 +25,21 @@ public abstract class UnitImpl implements Unit {
     private final double mass;
 
     //Updating variables
-    private int timer;
-    private static final int MAX_TIMER = 400;
+    private float timer;
+    public static final int MAX_TIMER = 400;
 
     //Rotation variables
     //150 , -295 :: 30 , -330 :: 90 , -270 :: 0 , -360
-    private static final double MIN_ANGLE = 150;
-    private static final double MAX_ANGLE = -295;
+    public static final double MIN_ANGLE = 150;
+    public static final double MAX_ANGLE = -295;
 
     //Unit view sizes
-    private static final int AREA = 15;
-    private static final double MAX_SIGHT = 15;
+    public static final int AREA = 15;
+    public static final double MAX_SIGHT = 15;
 
     //Max values
-    private static final double MAX_FORCE = 200;
-    private static final double MAX_SPEED = 200;
+    public static final double MAX_FORCE = 200;
+    public static final double MAX_SPEED = 200;
 
     //Figure sizes and positions
     private final int sideLength;
@@ -166,14 +166,37 @@ public abstract class UnitImpl implements Unit {
     }
 
     @Override
+    public final void setSpeed(final Vector2D speed) {
+        this.speed = new Vector2DImpl(speed);
+    }
+
+    @Override
     public final void toogleWander() {
         this.isWander = !this.isWander;
     }
 
-    /**
-     * Adjust the position to link opposite window sides.
-     */
-    private void adjustPosition() {
+    @Override
+    public final double getMass() {
+        return this.mass;
+    }
+
+    @Override
+    public final float getTimer() {
+        return this.timer;
+    }
+
+    @Override
+    public final void setTimer(final float timer) {
+        this.timer = timer;
+    }
+
+    @Override
+    public final void setAngle(final double degrees) {
+        this.angle = degrees;
+    }
+
+    @Override
+    public final void adjustPosition() {
         if (this.position.getX() < 0) {
             this.position.setX(ViewImpl.WIDTH);
         }

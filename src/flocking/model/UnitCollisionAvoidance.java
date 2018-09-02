@@ -1,12 +1,14 @@
 package flocking.model;
 
+import java.awt.Point;
+import java.awt.geom.Line2D;
 import java.util.List;
 import java.util.Optional;
 
 /**
  * An {@link Unit} decorator used to perform the collision avoidance.
  */
-public class UnitCollisionAvoidance extends UnitImpl implements Unit {
+public class UnitCollisionAvoidance extends UnitDecorator implements Unit {
 
     private final Unit unit;
 
@@ -17,12 +19,13 @@ public class UnitCollisionAvoidance extends UnitImpl implements Unit {
      * @param unit the base of this decorator
      */
     public UnitCollisionAvoidance(final Unit unit) {
-        super(unit.getPosition(), unit.getSideLength(), unit.getSpeed());
+        super(unit);
         this.unit = unit;
     }
 
     @Override
     public final Vector2D getSteeringForce() {
+        System.out.println("A" + this.getPosition());
         return new Vector2DImpl(this.unit.getSteeringForce().sumVector(this.obstacleAvoidance()));
     }
 
@@ -48,5 +51,15 @@ public class UnitCollisionAvoidance extends UnitImpl implements Unit {
         final Vector2D sight = this.getSpeed().normalize().mulScalar(UnitCollisionAvoidance.MAX_SIGHT).sumVector(this.getPosition());
         final Vector2D avoidanceForce = sight.sumVector(obstacle.get().getPosition().mulScalar(-1));
         return avoidanceForce.normalize().mulScalar(UnitCollisionAvoidance.MAX_AVOIDANCE);
+    }
+
+    /**
+     * @return a {@link Line2D} representing the sight
+     */
+    public Line2D.Double getLine() {
+        final Vector2D sight = this.getSpeed().normalize().mulScalar(UnitCollisionAvoidance.MAX_SIGHT).sumVector(this.getPosition());
+        return new Line2D.Double(new Point((int) Math.round(this.getPosition().getX()), (int) Math.round(this.getPosition().getY())),
+                new Point((int) Math.round(sight.getX()), (int) Math.round(sight.getY())));
+
     }
 }

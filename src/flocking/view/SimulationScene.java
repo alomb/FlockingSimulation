@@ -16,6 +16,8 @@ import javax.swing.JPanel;
 import flocking.controller.Controller;
 import flocking.model.Entity;
 import flocking.model.Target;
+import flocking.model.Unit;
+import flocking.model.UnitDecorator;
 import flocking.model.UnitImpl;
 
 /**
@@ -74,14 +76,14 @@ public class SimulationScene extends JPanel implements Scene {
         for (final Entity e : this.controller.getFigures()) {
             final List<Point> vertices = new ArrayList<>();
             e.getFigure().forEach(f -> vertices.add(new Point((int) Math.round(f.getX()), (int) Math.round(f.getY()))));
-            if (e instanceof UnitImpl) {
+            if (e instanceof Unit) {
                 if (this.toogleGizmos) {
                     g.setColor(Color.GRAY);
-                    g.draw(((UnitImpl) e).getCohesionArea());
-                    g.draw(((UnitImpl) e).getLine());
+                    g.draw(((Unit) e).getCohesionArea());
+                    //g.draw(((Unit) e).getLine());
                 }
                 g.setColor(this.unitColor);
-                this.drawFigure(g, vertices, ((UnitImpl) e).getAngle());
+                this.drawFigure(g, vertices, ((Unit) e).getAngle());
             } else if (e instanceof Target) {
                 g.setColor(this.targetColor);
                 g.fillRect(e.getArea(1).x, e.getArea(1).y, e.getArea(1).width, e.getArea(1).height);

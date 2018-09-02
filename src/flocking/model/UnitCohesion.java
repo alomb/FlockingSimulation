@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * An {@link Unit} decorator used to perform the cohesion rule.
  */
-public class UnitCohesion extends UnitImpl implements Unit {
+public class UnitCohesion extends UnitDecorator implements Unit {
 
     private final Unit unit;
 
@@ -16,7 +16,7 @@ public class UnitCohesion extends UnitImpl implements Unit {
      * @param unit the base of this decorator
      */
     public UnitCohesion(final Unit unit) {
-        super(unit.getPosition(), unit.getSideLength(), unit.getSpeed());
+        super(unit);
         this.unit = unit;
     }
 
