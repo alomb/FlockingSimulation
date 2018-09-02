@@ -1,4 +1,4 @@
-A personal research and implementation test based on Craig Reynold's paper "Flocks, Herds, and Schools: A Distributed Behavioral Model" that describe a very simple approach used to simulate a group of autonomous agents (called "Boids" by Reynold) acting like in bird or fish flocks.
+A personal research and implementation test based on Craig Reynold's paper "Flocks, Herds, and Schools: A Distributed Behavioral Model" that describes a very simple approach used to simulate a group of autonomous agents (called "Boids" by Reynold) acting like in bird or fish flocks.
 
 The program is written in Java. If you are familiar with vi (do not be frightened please) you'll be fine because commands are sent like vi in the bottom of the window and are:
 
