@@ -2,6 +2,8 @@ package flocking.model.unit;
 
 import java.util.Random;
 
+import javax.naming.OperationNotSupportedException;
+
 import flocking.model.Vector2D;
 import flocking.model.Vector2DImpl;
 
@@ -12,7 +14,8 @@ public class UnitWander extends UnitDecorator implements Unit {
 
     private final Unit unit;
 
-    private static final int DELTA_ANGLE = 50;
+    private static final double MAX_WANDER = (UnitImpl.MAX_SPEED * 5) / 6;
+    private static final int DELTA_ANGLE = 20;
 
     /**
      * @param unit the base of this decorator
@@ -38,7 +41,11 @@ public class UnitWander extends UnitDecorator implements Unit {
         }
 
         Vector2D center = new Vector2DImpl(this.getSpeed());
-        center = center.normalize().mulScalar(this.getSideLength() * 2);
+        try {
+            center = center.normalize().mulScalar(UnitWander.MAX_WANDER);
+        } catch (OperationNotSupportedException e) {
+            return new Vector2DImpl(0, 0);
+        }
 
         center = center.rotate(deltaAngle);
 

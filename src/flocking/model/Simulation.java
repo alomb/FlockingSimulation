@@ -205,7 +205,7 @@ public class Simulation implements Model {
      * @param unit the {@link Unit} which call this 
      * @return the {@link List} of {@link Entity} within the area
      */
-    public static List<Entity> getNeighbors(final Shape neighborsArea, final Unit unit) {
+    public static List<Unit> getNeighbors(final Shape neighborsArea, final Unit unit) {
         return Simulation.units.stream().filter(e -> {
             return neighborsArea.contains(new Point((int) Math.round(e.getPosition().getX()),
                     ((int) Math.round(e.getPosition().getY())))) && !e.equals(unit);

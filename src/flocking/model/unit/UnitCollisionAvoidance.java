@@ -5,6 +5,8 @@ import java.awt.geom.Line2D;
 import java.util.List;
 import java.util.Optional;
 
+import javax.naming.OperationNotSupportedException;
+
 import flocking.model.Entity;
 import flocking.model.Simulation;
 import flocking.model.Vector2D;
@@ -17,7 +19,7 @@ public class UnitCollisionAvoidance extends UnitDecorator implements Unit {
 
     private final Unit unit;
 
-    private static final double MAX_SIGHT = 15;
+    private static final double MAX_SIGHT = 20;
     private static final double MAX_AVOIDANCE = 200;
 
     /**
@@ -52,18 +54,29 @@ public class UnitCollisionAvoidance extends UnitDecorator implements Unit {
             return new Vector2DImpl(0, 0);
         }
 
-        final Vector2D sight = this.getSpeed().normalize().mulScalar(UnitCollisionAvoidance.MAX_SIGHT).sumVector(this.getPosition());
-        final Vector2D avoidanceForce = sight.sumVector(obstacle.get().getPosition().mulScalar(-1));
-        return avoidanceForce.normalize().mulScalar(UnitCollisionAvoidance.MAX_AVOIDANCE);
+        Vector2D sight;
+        try {
+            sight = this.getSpeed().normalize().mulScalar(UnitCollisionAvoidance.MAX_SIGHT).sumVector(this.getPosition());
+            final Vector2D avoidanceForce = sight.sumVector(obstacle.get().getPosition().mulScalar(-1));
+            return avoidanceForce.normalize().mulScalar(UnitCollisionAvoidance.MAX_AVOIDANCE);
+        } catch (OperationNotSupportedException e) {
+            e.printStackTrace();
+        }
+
+        return new Vector2DImpl(0, 0);
     }
 
     /**
      * @return a {@link Line2D} representing the sight
      */
     public Line2D.Double getLine() {
-        final Vector2D sight = this.getSpeed().normalize().mulScalar(UnitCollisionAvoidance.MAX_SIGHT).sumVector(this.getPosition());
-        return new Line2D.Double(new Point((int) Math.round(this.getPosition().getX()), (int) Math.round(this.getPosition().getY())),
-                new Point((int) Math.round(sight.getX()), (int) Math.round(sight.getY())));
-
+        Vector2D sight;
+        try {
+            sight = this.getSpeed().normalize().mulScalar(UnitCollisionAvoidance.MAX_SIGHT).sumVector(this.getPosition());
+            return new Line2D.Double(new Point((int) Math.round(this.getPosition().getX()), (int) Math.round(this.getPosition().getY())),
+                    new Point((int) Math.round(sight.getX()), (int) Math.round(sight.getY())));
+        } catch (OperationNotSupportedException e) {
+            return new Line2D.Double(new Point(0, 0), new Point(0, 0));
+        } 
     }
 }

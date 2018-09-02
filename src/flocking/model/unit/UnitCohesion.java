@@ -2,6 +2,8 @@ package flocking.model.unit;
 
 import java.util.List;
 
+import javax.naming.OperationNotSupportedException;
+
 import flocking.model.Entity;
 import flocking.model.Simulation;
 import flocking.model.Vector2D;
@@ -14,8 +16,8 @@ public class UnitCohesion extends UnitDecorator implements Unit {
 
     private final Unit unit;
 
-    private static final double MAX_COHESION = 60;
-    private static final double MIN_COHESION_DISTANCE = 10;
+    private static final double MAX_COHESION = 50;
+    private static final double MIN_COHESION_DISTANCE = 15;
 
     /**
      * @param unit the base of this decorator
@@ -34,7 +36,7 @@ public class UnitCohesion extends UnitDecorator implements Unit {
      * @return the cohesion rule steering force
      */
     private Vector2D cohesion() {
-        final List<Entity> neighbors = Simulation.getNeighbors(this.getCohesionArea(), this);
+        final List<Unit> neighbors = Simulation.getNeighbors(this.getCohesionArea(), this);
         if (neighbors.isEmpty()) {
             return new Vector2DImpl(0, 0);
         }
@@ -51,7 +53,11 @@ public class UnitCohesion extends UnitDecorator implements Unit {
         if (counter != 0) {
             centroid = centroid.mulScalar(1 / counter);
             final Vector2D cohesionForce = centroid.sumVector(this.getPosition().mulScalar(-1));
-            return cohesionForce.normalize().mulScalar(UnitCohesion.MAX_COHESION);
+            try {
+                return cohesionForce.normalize().mulScalar(UnitCohesion.MAX_COHESION);
+            } catch (OperationNotSupportedException e) {
+                return new Vector2DImpl(0, 0);
+            }
         }
 
         return new Vector2DImpl(0, 0);

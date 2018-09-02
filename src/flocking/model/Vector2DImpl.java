@@ -1,5 +1,7 @@
 package flocking.model;
 
+import javax.naming.OperationNotSupportedException;
+
 /**
  * Implementation of {@link Vector2D}.
  */
@@ -51,7 +53,10 @@ public class Vector2DImpl implements Vector2D {
     }
 
     @Override
-    public final Vector2D normalize() {
+    public final Vector2D normalize() throws OperationNotSupportedException {
+        if (this.length() == 0) {
+            throw new OperationNotSupportedException();
+        }
         return new Vector2DImpl(this.x / this.length(), this.y / this.length());
     }
 

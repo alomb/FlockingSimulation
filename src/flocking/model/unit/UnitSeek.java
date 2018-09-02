@@ -1,5 +1,7 @@
 package flocking.model.unit;
 
+import javax.naming.OperationNotSupportedException;
+
 import flocking.model.Simulation;
 import flocking.model.Vector2D;
 import flocking.model.Vector2DImpl;
@@ -11,7 +13,7 @@ public class UnitSeek extends UnitDecorator implements Unit {
 
     private final Unit unit;
 
-    private static final double MAX_SEEK = 50;
+    private static final double MAX_SEEK = UnitImpl.MAX_SPEED;
 
     /**
      * @param unit the base of this decorator
@@ -34,7 +36,11 @@ public class UnitSeek extends UnitDecorator implements Unit {
         final Vector2D target = new Vector2DImpl(Simulation.TARGET.getPosition().getX(), 
                 Simulation.TARGET.getPosition().getY());
 
-        return (((target.sumVector(this.getPosition().mulScalar(-1))).normalize()).mulScalar(UnitSeek.MAX_SEEK)).sumVector(this.getSpeed().mulScalar(-1));
+        try {
+            return (((target.sumVector(this.getPosition().mulScalar(-1))).normalize()).mulScalar(UnitSeek.MAX_SEEK)).sumVector(this.getSpeed().mulScalar(-1));
+        } catch (OperationNotSupportedException e) {
+            return new Vector2DImpl(0, 0);
+        }
     }
 
 }

@@ -1,5 +1,7 @@
 package flocking.model;
 
+import javax.naming.OperationNotSupportedException;
+
 /**
  * A bidimensional vector.
  */
@@ -32,8 +34,9 @@ public interface Vector2D {
 
     /**
      * @return the vector normalized
+     * @throws OperationNotSupportedException 
      */
-    Vector2D normalize();
+    Vector2D normalize() throws OperationNotSupportedException;
 
     /**
      * @param dx the horizontal offset to add

@@ -1,11 +1,9 @@
 package flocking.model.unit;
 
-import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Arc2D;
-import java.awt.geom.Line2D;
 import java.awt.geom.Path2D;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -39,8 +37,7 @@ public abstract class UnitImpl implements Unit {
     private static final double MAX_ANGLE = -295;
 
     //Unit view sizes
-    private static final int AREA = 15;
-    private static final double MAX_SIGHT = 15;
+    private static final int AREA = 20;
 
     //Max values
     /**
@@ -210,15 +207,5 @@ public abstract class UnitImpl implements Unit {
         if (this.position.getY() > ViewImpl.HEIGHT - ViewImpl.TEXT_HEIGHT) {
             this.position.setY(0);
         }
-    }
-
-    /**
-     * @return a {@link Line2D} representing the sight
-     */
-    public Line2D.Double getLine() {
-        final Vector2D sight = this.speed.normalize().mulScalar(UnitImpl.MAX_SIGHT).sumVector(this.position);
-        return new Line2D.Double(new Point((int) Math.round(this.position.getX()), (int) Math.round(this.position.getY())),
-                new Point((int) Math.round(sight.getX()), (int) Math.round(sight.getY())));
-
     }
 }
