@@ -1,11 +1,16 @@
-package flocking.model;
+package flocking.model.unit;
 
 import java.util.List;
+
+import flocking.model.Entity;
+import flocking.model.Simulation;
+import flocking.model.Vector2D;
+import flocking.model.Vector2DImpl;
 
 /**
  * An {@link Unit} decorator used to perform the alignment rule.
  */
-public class UnitAlignment extends UnitImpl implements Unit {
+public class UnitAlignment extends UnitDecorator implements Unit {
 
     private final Unit unit;
 
@@ -15,7 +20,7 @@ public class UnitAlignment extends UnitImpl implements Unit {
      * @param unit the base of this decorator
      */
     public UnitAlignment(final Unit unit) {
-        super(unit.getPosition(), unit.getSideLength(), unit.getSpeed());
+        super(unit);
         this.unit = unit;
     }
 

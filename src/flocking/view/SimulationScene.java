@@ -16,9 +16,7 @@ import javax.swing.JPanel;
 import flocking.controller.Controller;
 import flocking.model.Entity;
 import flocking.model.Target;
-import flocking.model.Unit;
-import flocking.model.UnitDecorator;
-import flocking.model.UnitImpl;
+import flocking.model.unit.Unit;
 
 /**
  * A generic implementation of {@link Scene} for the simulation.

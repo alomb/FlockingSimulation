@@ -1,6 +1,11 @@
-package flocking.model;
+package flocking.model.unit;
 
 import java.util.List;
+
+import flocking.model.Entity;
+import flocking.model.Simulation;
+import flocking.model.Vector2D;
+import flocking.model.Vector2DImpl;
 
 /**
  * An {@link Unit} decorator used to perform the cohesion rule.

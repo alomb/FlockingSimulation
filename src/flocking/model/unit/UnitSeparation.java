@@ -1,11 +1,16 @@
-package flocking.model;
+package flocking.model.unit;
 
 import java.util.List;
+
+import flocking.model.Entity;
+import flocking.model.Simulation;
+import flocking.model.Vector2D;
+import flocking.model.Vector2DImpl;
 
 /**
  * An {@link Unit} decorator used to perform the separation rule.
  */
-public class UnitSeparation extends UnitImpl implements Unit {
+public class UnitSeparation extends UnitDecorator implements Unit {
 
     private final Unit unit;
 
@@ -16,7 +21,7 @@ public class UnitSeparation extends UnitImpl implements Unit {
      * @param unit the base of this decorator
      */
     public UnitSeparation(final Unit unit) {
-        super(unit.getPosition(), unit.getSideLength(), unit.getSpeed());
+        super(unit);
         this.unit = unit;
     }
 

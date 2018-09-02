@@ -1,11 +1,13 @@
-package flocking.model;
+package flocking.model.unit;
 
 import java.awt.Rectangle;
 import java.awt.Shape;
 import java.util.List;
 
+import flocking.model.Vector2D;
+
 /**
- *
+ * The decorator base class.
  */
 public abstract class UnitDecorator implements Unit {
 
@@ -40,28 +42,28 @@ public abstract class UnitDecorator implements Unit {
 
     @Override
     public final void update(final float elapsed) {
-        if (unit.getTimer() <= 0) {
+        if (this.unit.getTimer() <= 0) {
             Vector2D result = this.getSteeringForce();
             result = result.clampMagnitude(UnitImpl.MAX_FORCE);
-            result = result.mulScalar(1 / unit.getMass());
+            result = result.mulScalar(1 / this.unit.getMass());
 
             final Vector2D finalSpeed = this.getSpeed().sumVector(result).clampMagnitude(UnitImpl.MAX_SPEED);
 
-            unit.setAngle(Math.toDegrees(Math.atan2(finalSpeed.getY(), finalSpeed.getX())));
-            if (unit.getAngle() < 0) {
-                unit.setAngle(this.getAngle() + 360);
-            } else if (unit.getAngle() > 360) {
-                unit.setAngle(this.getAngle() - 360);
+            this.unit.setAngle(Math.toDegrees(Math.atan2(finalSpeed.getY(), finalSpeed.getX())));
+            if (this.unit.getAngle() < 0) {
+                this.unit.setAngle(this.getAngle() + 360);
+            } else if (this.unit.getAngle() > 360) {
+                this.unit.setAngle(this.getAngle() - 360);
             }
 
             this.setPosition(this.getPosition().sumVector(finalSpeed));
-            unit.adjustPosition();
+            this.unit.adjustPosition();
 
-            unit.setSpeed(this.getSpeed().setAngle(this.getAngle()));
+            this.unit.setSpeed(this.getSpeed().setAngle(this.getAngle()));
 
-            unit.setTimer(UnitImpl.MAX_TIMER);
+            this.unit.setTimer(UnitImpl.MAX_TIMER);
         } else {
-            this.setTimer(unit.getTimer() - elapsed);
+            this.setTimer(this.unit.getTimer() - elapsed);
         }
     }
 
@@ -87,12 +89,17 @@ public abstract class UnitDecorator implements Unit {
 
     @Override
     public final void setSpeed(final Vector2D speed) {
-        unit.setSpeed(speed);
+        this.unit.setSpeed(speed);
     }
 
     @Override
     public final double getAngle() {
         return this.unit.getAngle();
+    }
+
+    @Override
+    public final void setAngle(final double degrees) {
+        this.unit.setAngle(degrees);
     }
 
     @Override
@@ -105,27 +112,21 @@ public abstract class UnitDecorator implements Unit {
 
     @Override
     public final double getMass() {
-        return unit.getMass();
+        return this.unit.getMass();
     }
 
     @Override
     public final float getTimer() {
-        return unit.getTimer();
+        return this.unit.getTimer();
     }
 
     @Override
     public final void setTimer(final float timer) {
-        unit.setTimer(timer);
-    }
-
-    @Override
-    public final void setAngle(final double degrees) {
-        unit.setAngle(degrees);
+        this.unit.setTimer(timer);
     }
 
     @Override
     public final void adjustPosition() {
-        unit.adjustPosition();
+        this.unit.adjustPosition();
     }
-
 }

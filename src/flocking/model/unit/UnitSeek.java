@@ -1,26 +1,31 @@
-package flocking.model;
+package flocking.model.unit;
+
+import flocking.model.Simulation;
+import flocking.model.Vector2D;
+import flocking.model.Vector2DImpl;
 
 /**
  * An {@link Unit} decorator used to perform the collision avoidance.
  */
-public class UnitSeek extends UnitImpl implements Unit {
+public class UnitSeek extends UnitDecorator implements Unit {
+
+    private final Unit unit;
 
     private static final double MAX_SEEK = 50;
 
     /**
-     * @param startPos the first {@link Unit}'s {@link Point}
-     * @param sideLength the {@link Unit} side length
-     * @param speed the {@link Unit} speed
+     * @param unit the base of this decorator
      */
-    public UnitSeek(final Vector2D startPos, final int sideLength, final Vector2D speed) {
-        super(startPos, sideLength, speed);
+    public UnitSeek(final Unit unit) {
+        super(unit);
+        this.unit = unit;
     }
 
     @Override
     public final Vector2D getSteeringForce() {
-        System.out.println("S" + this.getPosition());
-        return new Vector2DImpl(this.seek());
+        return new Vector2DImpl(this.seek().sumVector(this.unit.getSteeringForce()));
     }
+
 
     /**
      * @return the seek steering forces

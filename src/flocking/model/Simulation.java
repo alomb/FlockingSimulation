@@ -11,6 +11,13 @@ import java.util.Random;
 import java.util.stream.Collectors;
 
 import flocking.controller.Controller;
+import flocking.model.unit.Unit;
+import flocking.model.unit.UnitAlignment;
+import flocking.model.unit.UnitBase;
+import flocking.model.unit.UnitCohesion;
+import flocking.model.unit.UnitCollisionAvoidance;
+import flocking.model.unit.UnitSeparation;
+import flocking.model.unit.UnitWander;
 import flocking.view.ViewImpl;
 
 /**
@@ -176,23 +183,17 @@ public class Simulation implements Model {
         final int speed = 6;
         final Random rnd = new Random();
 
-        /*
-        Simulation.UNITS.add(new UnitImpl(new Vector2DImpl(0,
-                rnd.nextInt((int) Toolkit.getDefaultToolkit().getScreenSize().getHeight())),
-                sideLength,
-                new Vector2DImpl(10, 0)));
-        */
-
         Simulation.UNITS.add(
                 new UnitAlignment(
                         new UnitSeparation(
                                 new UnitCohesion(
                                     new UnitCollisionAvoidance(
-                                            new UnitSeek(new Vector2DImpl(rnd.nextInt((int) Toolkit.getDefaultToolkit().getScreenSize().getWidth()),
+                                            new UnitWander(
+                                                    new UnitBase(new Vector2DImpl(rnd.nextInt((int) Toolkit.getDefaultToolkit().getScreenSize().getWidth()),
                                                     rnd.nextInt((int) Toolkit.getDefaultToolkit().getScreenSize().getHeight() - ViewImpl.TEXT_HEIGHT / 2)),
                                                     sideLength,
                                                     new Vector2DImpl(rnd.nextBoolean() ? speed : -speed,
-                                                            rnd.nextBoolean() ? speed : -speed)))))));
+                                                            rnd.nextBoolean() ? speed : -speed))))))));
     }
 
     /**

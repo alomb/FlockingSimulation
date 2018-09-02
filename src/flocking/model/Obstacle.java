@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
+
 /**
  * An unmovable {@link Entity} that {@link Unit}s must avoid.
  */

@@ -1,4 +1,4 @@
-package flocking.model;
+package flocking.model.unit;
 
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -11,10 +11,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import flocking.model.Vector2D;
+import flocking.model.Vector2DImpl;
 import flocking.view.ViewImpl;
 
 /**
- * A basic implementation of {@link Entity}.
+ * A basic implementation of {@link Unit}.
  */
 public abstract class UnitImpl implements Unit {
 
@@ -26,19 +28,28 @@ public abstract class UnitImpl implements Unit {
 
     //Updating variables
     private float timer;
+    /**
+     * Max timer value.
+     */
     public static final int MAX_TIMER = 400;
 
     //Rotation variables
     //150 , -295 :: 30 , -330 :: 90 , -270 :: 0 , -360
-    public static final double MIN_ANGLE = 150;
-    public static final double MAX_ANGLE = -295;
+    private static final double MIN_ANGLE = 150;
+    private static final double MAX_ANGLE = -295;
 
     //Unit view sizes
-    public static final int AREA = 15;
-    public static final double MAX_SIGHT = 15;
+    private static final int AREA = 15;
+    private static final double MAX_SIGHT = 15;
 
     //Max values
+    /**
+     * Max resulting steering force {@link Vector2D} length.
+     */
     public static final double MAX_FORCE = 200;
+    /**
+     * Max speed {@link Vector2D} length.
+     */
     public static final double MAX_SPEED = 200;
 
     //Figure sizes and positions
@@ -99,6 +110,11 @@ public abstract class UnitImpl implements Unit {
     @Override
     public final double getAngle() {
         return this.angle;
+    }
+
+    @Override
+    public final void setAngle(final double degrees) {
+        this.angle = degrees;
     }
 
     @Override
@@ -188,11 +204,6 @@ public abstract class UnitImpl implements Unit {
     @Override
     public final void setTimer(final float timer) {
         this.timer = timer;
-    }
-
-    @Override
-    public final void setAngle(final double degrees) {
-        this.angle = degrees;
     }
 
     @Override

@@ -1,26 +1,30 @@
-package flocking.model;
+package flocking.model.unit;
 
 import java.util.Random;
+
+import flocking.model.Vector2D;
+import flocking.model.Vector2DImpl;
 
 /**
  * The base Unit implementation used by decorators.
  */
-public class UnitBase extends UnitImpl implements Unit {
+public class UnitWander extends UnitDecorator implements Unit {
+
+    private final Unit unit;
 
     private static final int DELTA_ANGLE = 20;
 
     /**
-     * @param startPos the first {@link Unit}'s {@link Point}
-     * @param sideLength the {@link Unit} side length
-     * @param speed the {@link Unit} speed
+     * @param unit the base of this decorator
      */
-    public UnitBase(final Vector2D startPos, final int sideLength, final Vector2D speed) {
-        super(startPos, sideLength, speed);
+    public UnitWander(final Unit unit) {
+        super(unit);
+        this.unit = unit;
     }
 
     @Override
     public final Vector2D getSteeringForce() {
-        return new Vector2DImpl(this.wander());
+        return new Vector2DImpl(this.wander().sumVector(this.unit.getSteeringForce()));
     }
 
     /**
@@ -28,9 +32,9 @@ public class UnitBase extends UnitImpl implements Unit {
      */
     private Vector2D wander() {
         final Random rnd = new Random();
-        double deltaAngle = rnd.nextInt(UnitBase.DELTA_ANGLE);
+        double deltaAngle = rnd.nextInt(UnitWander.DELTA_ANGLE);
         if (rnd.nextBoolean()) {
-            deltaAngle = -rnd.nextInt(UnitBase.DELTA_ANGLE);
+            deltaAngle = -rnd.nextInt(UnitWander.DELTA_ANGLE);
         }
 
         Vector2D center = new Vector2DImpl(this.getSpeed());

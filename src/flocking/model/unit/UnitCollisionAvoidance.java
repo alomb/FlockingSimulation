@@ -1,9 +1,14 @@
-package flocking.model;
+package flocking.model.unit;
 
 import java.awt.Point;
 import java.awt.geom.Line2D;
 import java.util.List;
 import java.util.Optional;
+
+import flocking.model.Entity;
+import flocking.model.Simulation;
+import flocking.model.Vector2D;
+import flocking.model.Vector2DImpl;
 
 /**
  * An {@link Unit} decorator used to perform the collision avoidance.
@@ -25,7 +30,6 @@ public class UnitCollisionAvoidance extends UnitDecorator implements Unit {
 
     @Override
     public final Vector2D getSteeringForce() {
-        System.out.println("A" + this.getPosition());
         return new Vector2DImpl(this.unit.getSteeringForce().sumVector(this.obstacleAvoidance()));
     }
 
