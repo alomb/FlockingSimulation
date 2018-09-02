@@ -143,7 +143,7 @@ public class Simulation implements Model {
                             Simulation.units.add(new UnitWander(this.getUnit(this.getBaseUnit(Simulation.units.get(i)))));
                         }
 
-                        Simulation.units = Simulation.units.subList(oldSize, Simulation.units.size());
+                        Simulation.updateUnits(oldSize);
                     }
 
                     this.wander = true;
@@ -161,7 +161,7 @@ public class Simulation implements Model {
                             Simulation.units.add(new UnitSeek(this.getUnit(this.getBaseUnit(Simulation.units.get(i)))));
                         }
 
-                        Simulation.units = Simulation.units.subList(oldSize, Simulation.units.size());
+                        Simulation.updateUnits(oldSize);
                     }
 
                     this.wander = false;
@@ -178,7 +178,7 @@ public class Simulation implements Model {
                         Simulation.units.add(this.getUnit(this.getBaseUnit(Simulation.units.get(i))));
                     }
 
-                    Simulation.units = Simulation.units.subList(oldSize, Simulation.units.size());
+                    Simulation.updateUnits(oldSize);
 
                     this.wander = false;
                     this.seek = false;
@@ -211,6 +211,15 @@ public class Simulation implements Model {
                     ((int) Math.round(e.getPosition().getY())))) && !e.equals(unit);
         }).collect(Collectors.toList());
     }
+
+    /**
+     * Remove all firstIndex values.
+     * @param firstIndex the first index to be maintained
+     */
+    private static void updateUnits(final int firstIndex) {
+        Simulation.units = Simulation.units.subList(firstIndex, Simulation.units.size());
+    }
+
 
     /**
      * @param sight the {@link Line2D} to check obstacles
@@ -296,4 +305,5 @@ public class Simulation implements Model {
         Simulation.OBSTACLES.add(new Obstacle(new Vector2DImpl(rnd.nextInt(x) + ViewImpl.WIDTH / 10,
             rnd.nextInt(y) + ViewImpl.HEIGHT / 8), maxSize));
     }
+
 }

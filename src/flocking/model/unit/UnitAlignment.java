@@ -16,7 +16,7 @@ public class UnitAlignment extends UnitDecorator implements Unit {
     private final Unit unit;
 
     private static final double MIN_ALIGNMENT_DISTANCE = 7;
-    private static final double MAX_ALIGNMENT = (UnitImpl.MAX_SPEED * 3) / 4;
+    private static final double MAX_ALIGNMENT = (UnitBase.MAX_SPEED * 3) / 4;
 
     /**
      * @param unit the base of this decorator

@@ -13,7 +13,7 @@ public class UnitSeek extends UnitDecorator implements Unit {
 
     private final Unit unit;
 
-    private static final double MAX_SEEK = UnitImpl.MAX_SPEED;
+    private static final double MAX_SEEK = UnitBase.MAX_SPEED;
 
     /**
      * @param unit the base of this decorator

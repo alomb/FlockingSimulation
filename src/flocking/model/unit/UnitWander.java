@@ -14,7 +14,7 @@ public class UnitWander extends UnitDecorator implements Unit {
 
     private final Unit unit;
 
-    private static final double MAX_WANDER = (UnitImpl.MAX_SPEED * 5) / 6;
+    private static final double MAX_WANDER = (UnitBase.MAX_SPEED * 5) / 6;
     private static final int DELTA_ANGLE = 20;
 
     /**

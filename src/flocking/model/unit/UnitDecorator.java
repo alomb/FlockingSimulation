@@ -44,10 +44,10 @@ public abstract class UnitDecorator implements Unit {
     public final void update(final float elapsed) {
         if (this.unit.getTimer() <= 0) {
             Vector2D result = this.getSteeringForce();
-            result = result.clampMagnitude(UnitImpl.MAX_FORCE);
+            result = result.clampMagnitude(UnitBase.MAX_FORCE);
             result = result.mulScalar(1 / this.unit.getMass());
 
-            final Vector2D finalSpeed = this.getSpeed().sumVector(result).clampMagnitude(UnitImpl.MAX_SPEED);
+            final Vector2D finalSpeed = this.getSpeed().sumVector(result).clampMagnitude(UnitBase.MAX_SPEED);
 
             this.unit.setAngle(Math.toDegrees(Math.atan2(finalSpeed.getY(), finalSpeed.getX())));
             if (this.unit.getAngle() < 0) {
@@ -61,7 +61,7 @@ public abstract class UnitDecorator implements Unit {
 
             this.unit.setSpeed(this.getSpeed().setAngle(this.getAngle()));
 
-            this.unit.setTimer(UnitImpl.MAX_TIMER);
+            this.unit.setTimer(UnitBase.MAX_TIMER);
         } else {
             this.setTimer(this.unit.getTimer() - elapsed);
         }
