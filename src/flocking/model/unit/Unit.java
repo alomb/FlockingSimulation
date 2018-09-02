@@ -41,11 +41,6 @@ public interface Unit extends Entity {
     void setAngle(double degrees);
 
     /**
-     * Set wander or target mode.
-     */
-    void toogleWander();
-
-    /**
      * @return the calculated steering force to move the unit
      */
     Vector2D getSteeringForce();

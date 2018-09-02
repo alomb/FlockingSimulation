@@ -56,9 +56,6 @@ public abstract class UnitImpl implements Unit {
     private final int sideLength;
     private final List<Vector2D> figure;
 
-    //Behaviour
-    private boolean isWander;
-
     /**
      * @param startPos the first {@link Unit}'s {@link Point}
      * @param sideLength the {@link Unit} side length
@@ -74,8 +71,6 @@ public abstract class UnitImpl implements Unit {
 
         this.sideLength = sideLength;
         this.figure = new ArrayList<>();
-
-        this.isWander = true;
     }
 
     @Override
@@ -184,11 +179,6 @@ public abstract class UnitImpl implements Unit {
     @Override
     public final void setSpeed(final Vector2D speed) {
         this.speed = new Vector2DImpl(speed);
-    }
-
-    @Override
-    public final void toogleWander() {
-        this.isWander = !this.isWander;
     }
 
     @Override

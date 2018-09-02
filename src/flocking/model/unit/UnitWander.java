@@ -12,7 +12,7 @@ public class UnitWander extends UnitDecorator implements Unit {
 
     private final Unit unit;
 
-    private static final int DELTA_ANGLE = 20;
+    private static final int DELTA_ANGLE = 50;
 
     /**
      * @param unit the base of this decorator
@@ -32,9 +32,9 @@ public class UnitWander extends UnitDecorator implements Unit {
      */
     private Vector2D wander() {
         final Random rnd = new Random();
-        double deltaAngle = rnd.nextInt(UnitWander.DELTA_ANGLE);
+        double deltaAngle = rnd.nextInt(UnitWander.DELTA_ANGLE) + DELTA_ANGLE / 3;
         if (rnd.nextBoolean()) {
-            deltaAngle = -rnd.nextInt(UnitWander.DELTA_ANGLE);
+            deltaAngle = -rnd.nextInt(UnitWander.DELTA_ANGLE) - DELTA_ANGLE / 3;
         }
 
         Vector2D center = new Vector2DImpl(this.getSpeed());

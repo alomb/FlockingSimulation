@@ -103,11 +103,6 @@ public abstract class UnitDecorator implements Unit {
     }
 
     @Override
-    public final void toogleWander() {
-        this.unit.toogleWander();
-    }
-
-    @Override
     public abstract Vector2D getSteeringForce();
 
     @Override
